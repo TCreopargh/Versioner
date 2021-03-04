@@ -1,0 +1,19 @@
+[
+    {
+        "modid": "versioner",
+        "name": "Versioner",
+        "description": "Minecraft modpack utilities",
+        "version": "${version}",
+        "mcversion": "${mcversion}",
+        "url": "",
+        "updateUrl": "",
+        "authorList": [],
+        "credits": "",
+        "logoFile": "",
+        "screenshots": [],
+        "requiredMods": [
+            "forgelin"
+        ],
+        "dependencies": []
+    }
+]
