@@ -1,6 +1,7 @@
 package xyz.tcreopargh.versioner
 
 import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
@@ -52,6 +53,11 @@ object Versioner {
                 versionData = VersionData(jsonObj)
                 logger?.info("Successfully fetched version data: ")
                 logger?.info(versionData.toString())
+            } catch(e: JsonSyntaxException) {
+                logger?.error(e.message, e)
+                logger?.error(
+                    "Version data JSON syntax error!"
+                )
             } catch (e: IOException) {
                 logger?.error(e.message, e)
                 logger?.error(

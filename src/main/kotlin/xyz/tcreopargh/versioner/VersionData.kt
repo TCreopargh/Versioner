@@ -2,6 +2,8 @@ package xyz.tcreopargh.versioner
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
+import com.google.gson.stream.MalformedJsonException
 import java.util.*
 
 data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Boolean = true) {
@@ -34,6 +36,7 @@ data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Bool
         }
     }
 
+    @Throws(MalformedJsonException::class, JsonSyntaxException::class)
     fun initialize() {
         val jsonObj = versionJsonObject
         if (jsonObj.has("versionName")) {
