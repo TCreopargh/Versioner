@@ -10,15 +10,15 @@ object NetworkHandler {
     fun readToString(targetURL: String?): String {
         val url = URL(targetURL)
         val bufferedReader = BufferedReader(
-            InputStreamReader(url.openStream())
+            InputStreamReader(url.openConnection().apply {
+                this.connectTimeout = versionCheckerConnectTimeout
+                this.readTimeout = versionCheckerReadTimeout
+            }.getInputStream())
         )
         val stringBuilder = StringBuilder()
-        var inputLine: String
-        while (bufferedReader.readLine().also {
-                inputLine = it
-            } != null) {
-            stringBuilder.append(inputLine)
-            stringBuilder.append(System.lineSeparator())
+        while(true) {
+            val line: String = bufferedReader.readLine() ?: break
+            stringBuilder.append(line)
         }
         bufferedReader.close()
         return stringBuilder.toString().trim()

@@ -5,8 +5,10 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import net.minecraftforge.fml.common.network.NetworkCheckHandler
+import net.minecraftforge.fml.relauncher.Side
+import org.apache.logging.log4j.Logger
 import java.io.IOException
-import java.util.*
 
 @Mod(
     modid = Versioner.MOD_ID,
@@ -20,14 +22,22 @@ object Versioner {
     const val VERSION = "1.0.0"
 
     var versionData: VersionData? = null
+    var isUpdateDialogShown = false
+
+    var logger: Logger? = null
+
+    @NetworkCheckHandler
+    fun checkModList(versions: Map<String?, String?>?, side: Side?): Boolean {
+        return true
+    }
 
     /**
      * This is the first initialization event. Register tile entities here.
      * The registry events below will have fired prior to entry to this method.
      */
     @Mod.EventHandler
-    fun preinit(event: FMLPreInitializationEvent) {
-
+    fun preInit(event: FMLPreInitializationEvent) {
+        logger = event.modLog
     }
 
     /**
@@ -35,46 +45,30 @@ object Versioner {
      */
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent?) {
-        versionData = VersionData()
-        try {
-            val jsonString = NetworkHandler.readToString(ConfigHandler.versionDataURL)
-            val jsonObj = JsonParser().parse(jsonString).asJsonObject
-            versionData?.versionJsonObject = jsonObj
-            if (jsonObj.has("versionName")) {
-                val versionName = jsonObj["versionName"].asString
-                versionData?.versionName = versionName
+        Thread {
+            try {
+                val jsonString = NetworkHandler.readToString(versionDataURL)
+                val jsonObj = JsonParser().parse(jsonString).asJsonObject
+                versionData = VersionData(jsonObj)
+                logger?.info("Successfully fetched version data: ")
+                logger?.info(versionData.toString())
+            } catch (e: IOException) {
+                logger?.error(e.message, e)
+                logger?.error(
+                    "Failed to fetch version data. Check your network connection," +
+                        " if you believe it's not your problem, report this to the modpack author."
+                )
             }
-            if (jsonObj.has("versionCode")) {
-                val versionCode = jsonObj["versionCode"].asInt
-                versionData?.versionCode = versionCode
-            }
-            if (jsonObj.has("versionFormat")) {
-                val versionFormat = jsonObj["versionFormat"].asString
-                versionData?.versionFormat = versionFormat
-            }
-            if (jsonObj.has("changelogs")) {
-                val changelogs: ChangelogMap = LinkedHashMap()
-                val changelogsObj = jsonObj["changelogs"].asJsonObject
-                for ((key, value) in changelogsObj.entrySet()) {
-                    val array = value.asJsonObject.getAsJsonArray(key)
-                    val versionChangelog: MutableList<String> = ArrayList()
-                    for (versionChangelogLine in array) {
-                        versionChangelog.add(versionChangelogLine.asString)
-                    }
-                    changelogs?.set(key, versionChangelog)
-                }
-                versionData?.changelogs = changelogs
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        }.apply {
+            name = "Versioner Network Thread"
+        }.start()
     }
 
     /**
      * This is the final initialization event. Register actions from other mods here
      */
     @Mod.EventHandler
-    fun postinit(event: FMLPostInitializationEvent) {
+    fun postInit(event: FMLPostInitializationEvent) {
 
     }
 }

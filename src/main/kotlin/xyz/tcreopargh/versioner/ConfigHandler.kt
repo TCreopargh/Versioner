@@ -1,45 +1,82 @@
+@file:Config(modid = "versioner")
+
 package xyz.tcreopargh.versioner
 
 import net.minecraftforge.common.config.Config
 import net.minecraftforge.common.config.Config.LangKey
-import net.minecraftforge.common.config.ConfigManager
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
-@EventBusSubscriber(modid = Versioner.MOD_ID)
-@Config(modid = "versioner")
-object ConfigHandler {
-    @Config.Comment("Extra text added before each line of changelog")
-    var changelogSeparator = " - "
+@LangKey("versioner.config.enable_version_checking")
+@Config.Comment(
+    "If this is set to false, the mod will not try to fetch the version data at all. ",
+    "It's a switch for modpack users that want to disable modpack version checking."
+)
+@JvmField
+var enableVersionChecking = true
 
-    @LangKey("versioner.config.current_version_category")
-    var currentVersion: CurrentVersion = CurrentVersion()
+@LangKey("versioner.config.changelog_separator")
+@Config.Comment("Extra text added before each line of changelog")
+@JvmField
+var changelogSeparator = " - "
 
-    @Config.Comment("Modpack name to use when the version data JSON does not contain a modpack name")
-    var modpackName = ""
+@LangKey("versioner.config.read_timeout")
+@Config.Comment("How much time to read before the connection closes with a timeout error.")
+@JvmField
+var versionCheckerReadTimeout = 5000
 
-    @Config.Comment("Where the version data JSON will be fetched from, KEEP http:// or https://")
-    var versionDataURL = ""
+@LangKey("versioner.config.connect_timeout")
+@Config.Comment("How much time to connect to the URL before the connection closes with a timeout error.")
+@JvmField
+var versionCheckerConnectTimeout = 5000
 
-    @Config.Comment("The url that is opened when the user clicks on update, KEEP http:// or https://")
-    var updateURL = ""
+@LangKey("versioner.config.modpack_name")
+@Config.Comment("The name of your modpack")
+@JvmField
+var modpackName = ""
 
-    @SubscribeEvent
-    fun onConfigChanged(eventArgs: OnConfigChangedEvent) {
-        if (eventArgs.modID == Versioner.MOD_ID) {
-            ConfigManager.sync(Versioner.MOD_ID, Config.Type.INSTANCE)
-        }
-    }
+@LangKey("versioner.config.version_data_url")
+@Config.Comment("Where the version data JSON will be fetched from, KEEP http:// or https://")
+@JvmField
+var versionDataURL = ""
 
-    class CurrentVersion {
-        @Config.Comment("Version name of the current version")
-        var versionName = "1.0.0"
+@LangKey("versioner.config.update_url")
+@Config.Comment("The url that is opened when the user clicks on update button, KEEP http:// or https://")
+@JvmField
+var updateURL = ""
 
-        @Config.Comment("Version code of the current version")
-        var versionCode = 0
+@LangKey("versioner.config.notifications_category")
+@Config.Comment("Update notifications & messages")
+@JvmField
+var versionNotifications = VersionNotifications()
 
-        @Config.Comment("How to output formatted version name. Only used for displaying current version.")
-        var versionFormat = "%versionName%"
-    }
+class VersionNotifications {
+    @LangKey("versioner.config.notifications.show_main_menu_dialog")
+    @Config.Comment("Show a pop-up dialog when the game loads to main menu if an update is available?")
+    @JvmField
+    var showMainMenuDialog = true
 }
+
+@LangKey("versioner.config.current_version_category")
+@Config.Comment(
+    "Config for setting info of current version",
+    "For modpack devs: make sure to change these when you update the modpack!"
+)
+@JvmField
+var currentVersion = CurrentVersion()
+
+class CurrentVersion {
+    @LangKey("versioner.config.current_version.version_name")
+    @Config.Comment("Version name of the current version")
+    @JvmField
+    var versionName = "1.0.0"
+
+    @LangKey("versioner.config.current_version.version_code")
+    @Config.Comment("Version code of the current version, must not be negative.")
+    @JvmField
+    var versionCode = 0
+
+    @LangKey("versioner.config.current_version.version_format")
+    @Config.Comment("How to output formatted version name. Only used for displaying current version.")
+    @JvmField
+    var versionFormat = "%versionName%"
+}
+

@@ -1,0 +1,18 @@
+#PARSE_ESCAPES
+versioner.config.enable_version_checking=Enable Modpack Version Checking
+versioner.config.changelog_separator=Changelog Separator
+versioner.config.current_version_category=Current Version
+versioner.config.modpack_name=Modpack Name
+versioner.config.version_data_url=Version Data Fetch URL
+versioner.config.update_url=Update URL
+versioner.config.current_version.version_name=Current Version Name
+versioner.config.current_version.version_code=Current Version Code
+versioner.config.current_version.version_format=Current Version Format
+versioner.update_dialog_option.yes=Update
+versioner.update_dialog_option.no=Ignore
+versioner.update_dialog_message=There's an update available for %s! \nLatest Version: %s \nCurrent Version: %s \nDo you want to update it?
+versioner.update_dialog_title=Update Available
+versioner.config.notifications_category=Notifications
+versioner.config.notifications.show_main_menu_dialog=Show Main Menu Dialog
+versioner.config.read_timeout=Read Timeout
+versioner.config.connect_timeout=Connect Timeout
