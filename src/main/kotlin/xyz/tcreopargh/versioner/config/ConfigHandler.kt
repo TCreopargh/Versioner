@@ -1,6 +1,8 @@
+/**
+ * @author TCreopargh
+ */
 @file:Config(modid = "versioner")
-
-package xyz.tcreopargh.versioner
+package xyz.tcreopargh.versioner.config
 
 import net.minecraftforge.common.config.Config
 import net.minecraftforge.common.config.Config.LangKey

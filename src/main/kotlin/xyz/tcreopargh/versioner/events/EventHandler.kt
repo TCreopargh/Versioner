@@ -1,12 +1,7 @@
-package xyz.tcreopargh.versioner
+package xyz.tcreopargh.versioner.events
 
-import com.google.gson.JsonParseException
-import com.google.gson.JsonParser
-import com.google.gson.stream.MalformedJsonException
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.text.ITextComponent
-import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.common.config.Config
 import net.minecraftforge.common.config.ConfigManager
 import net.minecraftforge.event.entity.EntityJoinWorldEvent
@@ -15,10 +10,16 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import org.apache.logging.log4j.Level
+import xyz.tcreopargh.versioner.Versioner
+import xyz.tcreopargh.versioner.Versioner.versionData
+import xyz.tcreopargh.versioner.config.versionNotifications
+import xyz.tcreopargh.versioner.util.getTextComponentFromJSON
+import xyz.tcreopargh.versioner.util.getUpdateChatMessage
 import java.util.*
 
-
+/**
+ * @author TCreopargh
+ */
 @EventBusSubscriber(modid = Versioner.MOD_ID)
 object EventHandler {
 
@@ -32,7 +33,7 @@ object EventHandler {
             if (player.uniqueID == Minecraft.getMinecraft().player.uniqueID) {
                 if (!Versioner.isUpdateMessageShown
                     && versionNotifications.showLoginChatUpdateNotification
-                    && Versioner.versionData?.isUpdateAvailable() == true
+                    && versionData?.isUpdateAvailable() == true
                 ) {
                     for (msg in getUpdateChatMessage()) {
                         player.sendMessage(msg)
@@ -40,8 +41,8 @@ object EventHandler {
                     Versioner.isUpdateMessageShown = true
                 }
                 recognizedPlayers.add(player.uniqueID)
-                val msg = Versioner.versionData?.welcomeMessage
-                if(msg != null) {
+                val msg = versionData?.welcomeMessage
+                if (msg != null) {
                     player.sendMessage(getTextComponentFromJSON(msg))
                 }
             }

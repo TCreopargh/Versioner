@@ -9,19 +9,27 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.network.NetworkCheckHandler
 import net.minecraftforge.fml.relauncher.Side
 import org.apache.logging.log4j.Logger
+import xyz.tcreopargh.versioner.config.versionDataURL
+import xyz.tcreopargh.versioner.data.VersionData
+import xyz.tcreopargh.versioner.util.NetworkHandler
 import java.io.IOException
-import java.lang.IllegalStateException
 
+/**
+ * @author TCreopargh
+ */
 @Mod(
     modid = Versioner.MOD_ID,
     name = Versioner.MOD_NAME,
     version = Versioner.VERSION,
-    modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter"
+    modLanguageAdapter = Versioner.LANG_ADAPTER,
+    dependencies = Versioner.DEPENDENCIES
 )
 object Versioner {
     const val MOD_ID = "versioner"
     const val MOD_NAME = "Versioner"
     const val VERSION = "1.0.0"
+    const val LANG_ADAPTER = "net.shadowfacts.forgelin.KotlinAdapter"
+    const val DEPENDENCIES = "required-after:crafttweaker;required-after:forgelin"
 
     var versionData: VersionData? = null
     var isUpdateMessageShown = false
@@ -54,7 +62,7 @@ object Versioner {
                 versionData = VersionData(jsonObj)
                 logger?.info("Successfully fetched version data: ")
                 logger?.info(versionData.toString())
-            } catch(e: JsonSyntaxException) {
+            } catch (e: JsonSyntaxException) {
                 logger?.error(e.message, e)
                 logger?.error(
                     "Version data JSON syntax error!"

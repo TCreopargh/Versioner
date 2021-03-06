@@ -1,13 +1,19 @@
-package xyz.tcreopargh.versioner
+package xyz.tcreopargh.versioner.data
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import com.google.gson.stream.MalformedJsonException
 import org.apache.logging.log4j.Level
+import xyz.tcreopargh.versioner.Versioner
+import xyz.tcreopargh.versioner.config.currentVersion
+import xyz.tcreopargh.versioner.util.compareVersionNames
 import java.io.IOException
 import java.util.*
 
+/**
+ * @author TCreopargh
+ */
 data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true) {
     var versionName: String? = null
     var versionFormat: String? = null

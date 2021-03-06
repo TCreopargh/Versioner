@@ -1,4 +1,4 @@
-package xyz.tcreopargh.versioner
+package xyz.tcreopargh.versioner.data
 
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.text.ITextComponent
@@ -6,6 +6,10 @@ import net.minecraft.util.text.Style
 import net.minecraft.util.text.TextComponentString
 import java.util.*
 
+/**
+ * @author TCreopargh
+ * Matches a player with either UUID or name. UUID takes priority over name.
+ */
 data class Sponsor(val name: String? = null, val uuid: UUID? = null) {
     fun matchesPlayer(player: EntityPlayer): Boolean {
         if (uuid != null && player.uniqueID.equals(uuid)) {
@@ -25,7 +29,7 @@ data class Sponsor(val name: String? = null, val uuid: UUID? = null) {
     }
 
     fun getFormattedText(style: Style = Style()): ITextComponent {
-        return TextComponentString(name).setStyle(style)
+        return TextComponentString(name ?: uuid?.toString() ?: "null").setStyle(style)
     }
 
     override fun hashCode(): Int {

@@ -1,4 +1,4 @@
-package xyz.tcreopargh.versioner;
+package xyz.tcreopargh.versioner.data;
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -6,9 +6,16 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.text.ITextComponent
 import net.minecraft.util.text.Style
 import net.minecraft.util.text.TextComponentString
+import xyz.tcreopargh.versioner.config.changelogPrefix
+import xyz.tcreopargh.versioner.util.addTextFormat
+import xyz.tcreopargh.versioner.util.br
+import xyz.tcreopargh.versioner.util.plus
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * @author TCreopargh
+ */
 data class SponsorCategory
 constructor(
     val name: String,
@@ -81,6 +88,11 @@ constructor(
         return false
     }
 
+    fun getFormattedName(): ITextComponent = TextComponentString(name).setStyle(titleStyle)
+
+    /**
+     * Using list because a large ITextComponent object can produce StackOverflowError
+     */
     fun getFormattedText(): MutableList<ITextComponent> {
         val components: MutableList<ITextComponent> =
             mutableListOf(TextComponentString(name).setStyle(titleStyle) + TextComponentString(":"))

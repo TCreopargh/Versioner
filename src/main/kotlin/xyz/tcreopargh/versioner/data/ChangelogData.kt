@@ -1,16 +1,21 @@
-package xyz.tcreopargh.versioner
+package xyz.tcreopargh.versioner.data
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import java.util.ArrayList
-import java.util.LinkedHashMap
+import xyz.tcreopargh.versioner.config.changelogPrefix
+import xyz.tcreopargh.versioner.util.ChangelogMap
+import java.util.*
 
+/**
+ * @author TCreopargh
+ * @constructor A JSON object, key is version name, value is a string array
+ */
 data class ChangelogData(val jsonObj: JsonObject) {
 
     var map: ChangelogMap = LinkedHashMap()
 
-    init{
+    init {
         for ((key, value) in jsonObj.entrySet()) {
             val arrayElement: JsonElement = value
             val array: JsonArray = if (arrayElement is JsonArray) arrayElement.asJsonArray else JsonArray()

@@ -1,8 +1,17 @@
-package xyz.tcreopargh.versioner
+/**
+ * @author TCreopargh
+ */
+package xyz.tcreopargh.versioner.util
 
 import com.google.gson.JsonParser
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
+import xyz.tcreopargh.versioner.Versioner.versionData
+import xyz.tcreopargh.versioner.commands.CommandHandler
+import xyz.tcreopargh.versioner.config.changelogPrefix
+import xyz.tcreopargh.versioner.config.currentVersion
+import xyz.tcreopargh.versioner.config.updateURL
+import xyz.tcreopargh.versioner.data.SponsorCategory
 
 typealias ChangelogMap = MutableMap<String, List<String>>
 typealias SponsorList = MutableList<SponsorCategory>
@@ -50,7 +59,7 @@ fun showUpdateDialog() {
             if (System.currentTimeMillis() - stamp > 1000 * 20) {
                 break
             }
-            if (Versioner.versionData?.isReady == true) {
+            if (versionData?.isReady == true) {
                 val options = arrayOf(
                     I18n.format("versioner.update_dialog_option.yes"),
                     I18n.format("versioner.update_dialog_option.no")
@@ -60,7 +69,7 @@ fun showUpdateDialog() {
                     I18n.format(
                         "versioner.update_dialog_message",
                         modpackName,
-                        Versioner.versionData?.versionName,
+                        versionData?.versionName,
                         currentVersion.versionName
                     ),
                     I18n.format("versioner.update_dialog_title"),
@@ -85,6 +94,9 @@ fun showUpdateDialog() {
 }
 */
 
+/**
+ * Using list because a large ITextComponent object can produce StackOverflowError
+ */
 fun getUpdateChatMessage(): List<ITextComponent> {
     val delimiter: ITextComponent = TextComponentString(DELIMITER).setStyle(
         Style().apply {
@@ -103,7 +115,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
             color = TextFormatting.YELLOW
         })
 
-    val diff: Int? = Versioner.versionData?.getVersionDiff()
+    val diff: Int? = versionData?.getVersionDiff()
 
     var latestVersion: ITextComponent = i18n(
         "versioner.variables.latest_version"
@@ -111,7 +123,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
         color = TextFormatting.DARK_GREEN
     }) + TextComponentString(" ") +
         TextComponentString(
-            Versioner.versionData?.versionName ?: "N/A"
+            versionData?.versionName ?: "N/A"
         ).setStyle(Style().apply {
             color = TextFormatting.GREEN
         }) + TextComponentString(" ")
@@ -125,7 +137,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
             })
     }
     var changelogs: ITextComponent = TextComponentString("")
-    val changelogList: List<String?>? = Versioner.versionData?.getCurrentChangelogs()
+    val changelogList: List<String?>? = versionData?.getCurrentChangelogs()
     if (changelogList != null) {
         changelogs += i18n("versioner.variables.changelogs").setStyle(Style().apply {
             color = TextFormatting.DARK_AQUA
@@ -148,15 +160,25 @@ fun getUpdateChatMessage(): List<ITextComponent> {
     }
 
 
-    val updateLink: ITextComponent = i18n(
+    var updateLink: ITextComponent = i18n(
         "versioner.variables.update_link"
     ).setStyle(
         Style().apply {
             color = TextFormatting.AQUA
+            bold = true
             underlined = true
             clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, updateURL)
         }
     )
+
+    if (versionData?.sponsors != null) {
+        updateLink += i18n("versioner.variables.sponsors_list").setStyle(Style().apply {
+            color = TextFormatting.RED
+            bold = true
+            underlined = true
+            clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/${CommandHandler.SPONSORS_COMMAND_NAME} ${CommandHandler.SPONSORS_COMMAND_ARG_LIST}")
+        })
+    }
 
     return listOf(
         delimiter,
