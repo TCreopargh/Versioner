@@ -4,7 +4,7 @@ import com.google.gson.JsonArray
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.text.*
 import xyz.tcreopargh.versioner.Versioner.versionData
-import xyz.tcreopargh.versioner.util.DELIMITER
+import xyz.tcreopargh.versioner.config.delimiter
 import xyz.tcreopargh.versioner.util.SponsorList
 import xyz.tcreopargh.versioner.util.br
 import xyz.tcreopargh.versioner.util.getTextComponentFromJSON
@@ -32,10 +32,10 @@ data class SponsorData(val jsonArray: JsonArray) {
      * Using list because a large ITextComponent object can produce StackOverflowError
      */
     fun getFormattedText(): MutableList<ITextComponent> {
-        val delimiter: ITextComponent = TextComponentString(DELIMITER).setStyle(Style().apply {
+        val delimiter: ITextComponent = TextComponentString(delimiter).setStyle(Style().apply {
             color = TextFormatting.YELLOW
         })
-        val components: MutableList<ITextComponent> = mutableListOf(delimiter.br())
+        val components: MutableList<ITextComponent> = mutableListOf(delimiter)
         components.add(TextComponentTranslation("versioner.variables.sponsors").setStyle(Style().apply {
             color = TextFormatting.LIGHT_PURPLE
             bold = true
@@ -45,7 +45,7 @@ data class SponsorData(val jsonArray: JsonArray) {
         }
         val msg = versionData?.sponsorMessage
         if (msg != null) {
-            components.add(getTextComponentFromJSON(msg).br())
+            components.add(getTextComponentFromJSON(msg))
         }
         components.add(delimiter)
         return components

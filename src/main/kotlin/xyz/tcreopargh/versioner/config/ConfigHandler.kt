@@ -45,6 +45,11 @@ var versionDataURL = ""
 @JvmField
 var updateURL = ""
 
+@LangKey("versioner.config.delimiter")
+@Config.Comment("The border of large messages, makes them look pretty")
+@JvmField
+var delimiter = "========================================"
+
 @LangKey("versioner.config.notifications_category")
 @Config.Comment("Update notifications & messages")
 @JvmField

@@ -1,4 +1,4 @@
-package xyz.tcreopargh.versioner.data;
+package xyz.tcreopargh.versioner.data
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -8,7 +8,6 @@ import net.minecraft.util.text.Style
 import net.minecraft.util.text.TextComponentString
 import xyz.tcreopargh.versioner.config.changelogPrefix
 import xyz.tcreopargh.versioner.util.addTextFormat
-import xyz.tcreopargh.versioner.util.br
 import xyz.tcreopargh.versioner.util.plus
 import java.util.*
 import kotlin.collections.ArrayList
@@ -97,8 +96,9 @@ constructor(
         val components: MutableList<ITextComponent> =
             mutableListOf(TextComponentString(name).setStyle(titleStyle) + TextComponentString(":"))
         for (sponsor in sponsors) {
-            components.add(TextComponentString(changelogPrefix) + sponsor.getFormattedText(sponsorStyle).br())
+            components.add(TextComponentString(changelogPrefix) + sponsor.getFormattedText(sponsorStyle))
         }
+        components.add(TextComponentString("\n"))
         return components
     }
 

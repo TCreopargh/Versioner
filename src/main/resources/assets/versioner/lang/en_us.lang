@@ -5,6 +5,7 @@ versioner.config.current_version_category=Current Version
 versioner.config.modpack_name=Modpack Name
 versioner.config.version_data_url=Version Data Fetch URL
 versioner.config.update_url=Update URL
+versioner.config.delimiter=Message Delimiter
 versioner.config.current_version.version_name=Current Version Name
 versioner.config.current_version.version_code=Current Version Code
 versioner.config.current_version.version_format=Current Version Format

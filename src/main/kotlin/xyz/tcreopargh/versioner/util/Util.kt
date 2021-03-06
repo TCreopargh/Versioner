@@ -10,13 +10,12 @@ import xyz.tcreopargh.versioner.Versioner.versionData
 import xyz.tcreopargh.versioner.commands.CommandHandler
 import xyz.tcreopargh.versioner.config.changelogPrefix
 import xyz.tcreopargh.versioner.config.currentVersion
+import xyz.tcreopargh.versioner.config.delimiter
 import xyz.tcreopargh.versioner.config.updateURL
 import xyz.tcreopargh.versioner.data.SponsorCategory
 
 typealias ChangelogMap = MutableMap<String, List<String>>
 typealias SponsorList = MutableList<SponsorCategory>
-
-const val DELIMITER = "=============================="
 
 operator fun ITextComponent.plus(t: ITextComponent): ITextComponent = this.appendSibling(t)
 operator fun ITextComponent.plus(s: String): ITextComponent = this.appendText(s)
@@ -98,7 +97,7 @@ fun showUpdateDialog() {
  * Using list because a large ITextComponent object can produce StackOverflowError
  */
 fun getUpdateChatMessage(): List<ITextComponent> {
-    val delimiter: ITextComponent = TextComponentString(DELIMITER).setStyle(
+    val delimiter: ITextComponent = TextComponentString(delimiter).setStyle(
         Style().apply {
             color = TextFormatting.LIGHT_PURPLE
         }
@@ -172,11 +171,14 @@ fun getUpdateChatMessage(): List<ITextComponent> {
     )
 
     if (versionData?.sponsors != null) {
-        updateLink += TextComponentString("    ") + i18n("versioner.variables.sponsors_list").setStyle(Style().apply {
+        updateLink += TextComponentString("§r    ") + i18n("versioner.variables.sponsors_list").setStyle(Style().apply {
             color = TextFormatting.RED
             bold = true
             underlined = true
-            clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/${CommandHandler.SponsorsCommand.NAME} ${CommandHandler.SponsorsCommand.ARG_LIST}")
+            clickEvent = ClickEvent(
+                ClickEvent.Action.RUN_COMMAND,
+                "/${CommandHandler.SponsorsCommand.NAME} ${CommandHandler.SponsorsCommand.ARG_LIST}"
+            )
         })
     }
 

@@ -5,8 +5,8 @@ import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.server.MinecraftServer
-import net.minecraft.util.text.ITextComponent
-import net.minecraft.util.text.TextComponentTranslation
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.text.*
 import net.minecraftforge.client.IClientCommand
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -65,7 +65,24 @@ object CommandHandler {
                         }
                     }
                 }
+                else -> {
+                    sender.sendMessage(TextComponentString(getUsage(sender)).setStyle(Style().apply {
+                        color = TextFormatting.RED
+                    }))
+                }
             }
+        }
+
+        override fun getTabCompletions(
+            server: MinecraftServer,
+            sender: ICommandSender,
+            args: Array<out String>,
+            pos: BlockPos?
+        ): MutableList<String> {
+            if (args.isEmpty()) {
+                return mutableListOf(ARG_LIST, ARG_CHECK)
+            }
+            return mutableListOf()
         }
 
         override fun allowUsageWithoutPrefix(p0: ICommandSender?, p1: String?): Boolean {
