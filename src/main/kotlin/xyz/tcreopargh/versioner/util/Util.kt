@@ -172,11 +172,11 @@ fun getUpdateChatMessage(): List<ITextComponent> {
     )
 
     if (versionData?.sponsors != null) {
-        updateLink += i18n("versioner.variables.sponsors_list").setStyle(Style().apply {
+        updateLink += TextComponentString("    ") + i18n("versioner.variables.sponsors_list").setStyle(Style().apply {
             color = TextFormatting.RED
             bold = true
             underlined = true
-            clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/${CommandHandler.SPONSORS_COMMAND_NAME} ${CommandHandler.SPONSORS_COMMAND_ARG_LIST}")
+            clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/${CommandHandler.SponsorsCommand.NAME} ${CommandHandler.SponsorsCommand.ARG_LIST}")
         })
     }
 

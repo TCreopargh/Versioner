@@ -17,14 +17,16 @@ import xyz.tcreopargh.versioner.Versioner.versionData
  */
 object CommandHandler {
 
-    const val SPONSORS_COMMAND_NAME = "sponsors"
-    const val SPONSORS_COMMAND_ARG_LIST = "list"
-    const val SPONSORS_COMMAND_ARG_CHECK = "check"
-
     @SideOnly(Side.CLIENT)
     class SponsorsCommand : CommandBase(), IClientCommand {
+        companion object {
+            const val NAME = "sponsors"
+            const val ARG_LIST = "list"
+            const val ARG_CHECK = "check"
+        }
+
         override fun getName(): String {
-            return SPONSORS_COMMAND_NAME
+            return NAME
         }
 
         override fun getUsage(p0: ICommandSender): String {
@@ -33,7 +35,7 @@ object CommandHandler {
 
         override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<out String>) {
             when (args.getOrNull(0)) {
-                SPONSORS_COMMAND_ARG_LIST -> {
+                ARG_LIST -> {
                     val msg: MutableList<ITextComponent>? = versionData?.sponsors?.getFormattedText()
                     if (msg != null) {
                         for (line in msg) {
@@ -41,7 +43,7 @@ object CommandHandler {
                         }
                     }
                 }
-                SPONSORS_COMMAND_ARG_CHECK -> {
+                ARG_CHECK -> {
                     val playerName = args.getOrNull(1)
                     val player: EntityPlayer? = server.playerList.getPlayerByUsername(playerName ?: "null")
                     if (player != null) {
