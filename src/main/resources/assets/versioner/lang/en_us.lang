@@ -19,3 +19,4 @@ versioner.variables.update_link=Update Link
 versioner.variables.n_versions_newer=(%s versions newer!)
 versioner.variables.update_chat_message_title=MODPACK UPDATE AVAILABLE!
 versioner.variables.changelogs=Changelogs:
+versioner.variables.sponsors=Sponsors:

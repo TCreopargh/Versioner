@@ -2,9 +2,7 @@ package xyz.tcreopargh.versioner
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import java.util.*
-import kotlin.collections.ArrayList
+import net.minecraft.util.text.*
 
 data class SponsorData(val jsonArray: JsonArray) {
 
@@ -13,18 +11,38 @@ data class SponsorData(val jsonArray: JsonArray) {
     init {
         for (entry in jsonArray) {
             val arrayElement: JsonElement = entry
-            if(entry.isJsonObject) {
+            if (entry.isJsonObject) {
                 val category: SponsorCategory = SponsorCategory(entry.asJsonObject)
-                if(!category.isBad()) {
+                if (!category.isBad()) {
                     categoryList.add(category)
                 }
             }
         }
     }
 
+    fun getFormattedText(): MutableList<ITextComponent> {
+        val delimiter: ITextComponent = TextComponentString(DELIMITER).setStyle(Style().apply {
+            color = TextFormatting.YELLOW
+        })
+        var components: MutableList<ITextComponent> = mutableListOf(delimiter.br())
+        components.add(TextComponentTranslation("versioner.variables.sponsors").setStyle(Style().apply {
+            color = TextFormatting.LIGHT_PURPLE
+            bold = true
+        }).br())
+        for (category in categoryList) {
+            components.addAll(category.getFormattedText())
+        }
+        val msg = Versioner.versionData?.sponsorMessage
+        if (msg != null) {
+            components.add(getTextComponentFromJSON(msg).br())
+        }
+        components.add(delimiter)
+        return components
+    }
+
     operator fun get(categoryName: String): SponsorCategory? {
         for (category in categoryList) {
-            if(category.name == categoryName) {
+            if (category.name == categoryName) {
                 return category
             }
         }

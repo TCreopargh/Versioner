@@ -1,6 +1,9 @@
 package xyz.tcreopargh.versioner
 
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.util.text.ITextComponent
+import net.minecraft.util.text.Style
+import net.minecraft.util.text.TextComponentString
 import java.util.*
 
 data class Sponsor(val name: String? = null, val uuid: UUID? = null) {
@@ -19,6 +22,10 @@ data class Sponsor(val name: String? = null, val uuid: UUID? = null) {
             return this.name == other.name && this.uuid == other.uuid
         }
         return false
+    }
+
+    fun getFormattedText(style: Style = Style()): ITextComponent {
+        return TextComponentString(name).setStyle(style)
     }
 
     override fun hashCode(): Int {

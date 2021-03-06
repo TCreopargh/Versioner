@@ -41,20 +41,8 @@ object EventHandler {
                 }
                 recognizedPlayers.add(player.uniqueID)
                 val msg = Versioner.versionData?.welcomeMessage
-                if (msg != null) {
-                    try {
-                        JsonParser().parse(msg)
-                        val component = ITextComponent.Serializer.jsonToComponent(msg)
-                        if (component != null) {
-                            player.sendMessage(component)
-                        }
-                    } catch (e: JsonParseException) {
-                        Versioner.logger?.log(Level.INFO, "Welcome message is not a valid JSON, using fallback to directly display the string instead...")
-                        player.sendMessage(TextComponentString(msg))
-                    } catch (e: MalformedJsonException) {
-                        Versioner.logger?.log(Level.INFO, "Welcome message is not a valid JSON, using fallback to directly display the string instead...")
-                        player.sendMessage(TextComponentString(msg))
-                    }
+                if(msg != null) {
+                    player.sendMessage(getTextComponentFromJSON(msg))
                 }
             }
         }

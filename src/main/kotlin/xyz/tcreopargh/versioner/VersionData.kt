@@ -18,6 +18,7 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
     var variables: JsonObject? = null
     var updateLink: String? = null
     var welcomeMessage: String? = null
+    var sponsorMessage: String? = null
 
     @Deprecated("Use ready() instead", replaceWith = ReplaceWith("ready()"))
 
@@ -35,6 +36,7 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
             "changelogs" -> changelogs.toString()
             "updateLink" -> updateLink.toString()
             "welcomeMessage" -> welcomeMessage.toString()
+            "sponsorMessage" -> sponsorMessage.toString()
             else ->
                 if (variables?.get(key)?.isJsonNull != false)
                     "null"
@@ -64,6 +66,10 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
             val welcomeMessage = jsonObj["welcomeMessage"].toString()
             this.welcomeMessage = welcomeMessage
         }
+        if (jsonObj.has("sponsorMessage")) {
+            val sponsorMessage = jsonObj["sponsorMessage"].toString()
+            this.sponsorMessage = sponsorMessage
+        }
         if (jsonObj.has("changelogs")) {
             val obj = jsonObj["changelogs"]?.asJsonObject
             if (obj != null) {
@@ -71,9 +77,9 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
             }
         }
         if (jsonObj.has("sponsors")) {
-            val obj = jsonObj["sponsors"]?.asJsonObject
-            if (obj != null) {
-                this.sponsors = SponsorData(obj)
+            val arr = jsonObj["sponsors"]?.asJsonArray
+            if (arr != null) {
+                this.sponsors = SponsorData(arr)
             }
         }
         if (jsonObj.has("variables")) {
@@ -109,7 +115,8 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 "sponsors",
                 "changelogs",
                 "updateLink",
-                "welcomeMessage"
+                "welcomeMessage",
+                "sponsorMessage"
             )
         )
         for (key in possibleKeys) {

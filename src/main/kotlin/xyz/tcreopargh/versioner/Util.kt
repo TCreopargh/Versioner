@@ -1,19 +1,17 @@
 package xyz.tcreopargh.versioner
 
-import net.minecraft.client.resources.I18n
+import com.google.gson.JsonParser
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
-import java.awt.Desktop
-import java.io.IOException
-import java.net.URI
-import java.net.URISyntaxException
-import javax.swing.JOptionPane
 
 typealias ChangelogMap = MutableMap<String, List<String>>
 typealias SponsorList = MutableList<SponsorCategory>
 
+const val DELIMITER = "=============================="
+
 operator fun ITextComponent.plus(t: ITextComponent): ITextComponent = this.appendSibling(t)
 operator fun ITextComponent.plus(s: String): ITextComponent = this.appendText(s)
+fun ITextComponent.br(): ITextComponent = this.appendText("\n")
 
 fun i18n(s: String, vararg o: Any): ITextComponent =
     TextComponentTranslation(s, o)
@@ -42,6 +40,7 @@ fun compareVersionNames(a: String?, b: String?): Int {
     return 0
 }
 
+/*
 @Deprecated("This should not be used")
 fun showUpdateDialog() {
     Thread {
@@ -84,9 +83,10 @@ fun showUpdateDialog() {
         name = "Versioner Update Dialog Thread"
     }.start()
 }
+*/
 
 fun getUpdateChatMessage(): List<ITextComponent> {
-    val delimiter: ITextComponent = TextComponentString("==============================").setStyle(
+    val delimiter: ITextComponent = TextComponentString(DELIMITER).setStyle(
         Style().apply {
             color = TextFormatting.LIGHT_PURPLE
         }
@@ -130,7 +130,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
         changelogs += i18n("versioner.variables.changelogs").setStyle(Style().apply {
             color = TextFormatting.DARK_AQUA
             bold = true
-        }) + "\n"
+        }).br()
         for (i in changelogList.indices) {
             val entry = changelogList[i]
             if (entry != null) {
@@ -141,10 +141,10 @@ fun getUpdateChatMessage(): List<ITextComponent> {
                 })
             }
             if (i < changelogList.size - 1) {
-                changelogs += "\n"
+                changelogs.br()
             }
         }
-        changelogs += "\n"
+        changelogs.br()
     }
 
 
@@ -193,4 +193,15 @@ fun Style.addTextFormat(textFormatString: String) {
     }
 }
 
+fun getTextComponentFromJSON(msg: String): ITextComponent {
+    try {
+        JsonParser().parse(msg)
+        val component = ITextComponent.Serializer.jsonToComponent(msg)
+        if (component != null) {
+            return component
+        }
+    } catch (ignored: Exception) {
+    }
+    return TextComponentString(msg)
+}
 
