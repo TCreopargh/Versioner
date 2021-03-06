@@ -1,4 +1,4 @@
-package xyz.tcreopargh.memorycleaner
+package xyz.tcreopargh.versioner.proxy
 
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException

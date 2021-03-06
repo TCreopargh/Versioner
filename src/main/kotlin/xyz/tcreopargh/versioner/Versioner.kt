@@ -8,8 +8,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.network.NetworkCheckHandler
 import net.minecraftforge.fml.relauncher.Side
 import org.apache.logging.log4j.Logger
-import xyz.tcreopargh.memorycleaner.CommonProxy
 import xyz.tcreopargh.versioner.data.VersionData
+import xyz.tcreopargh.versioner.proxy.CommonProxy
 
 /**
  * @author TCreopargh
@@ -28,8 +28,8 @@ object Versioner {
     const val LANG_ADAPTER = "net.shadowfacts.forgelin.KotlinAdapter"
     const val DEPENDENCIES = "required-after:crafttweaker;required-after:forgelin"
 
-    const val CLIENT_PROXY = "xyz.tcreopargh.memorycleaner.ClientProxy"
-    const val COMMON_PROXY = "xyz.tcreopargh.memorycleaner.CommonProxy"
+    const val CLIENT_PROXY = "xyz.tcreopargh.versioner.proxy.ClientProxy"
+    const val COMMON_PROXY = "xyz.tcreopargh.versioner.proxy.CommonProxy"
 
     var versionData: VersionData? = null
     var isUpdateMessageShown = false
@@ -40,6 +40,7 @@ object Versioner {
         clientSide = CLIENT_PROXY,
         serverSide = COMMON_PROXY
     )
+    @JvmField
     var proxy: CommonProxy? = null
 
     @NetworkCheckHandler

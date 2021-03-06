@@ -1,4 +1,4 @@
-package xyz.tcreopargh.memorycleaner
+package xyz.tcreopargh.versioner.proxy
 
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
