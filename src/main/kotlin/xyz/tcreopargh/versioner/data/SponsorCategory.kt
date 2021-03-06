@@ -98,7 +98,6 @@ constructor(
         for (sponsor in sponsors) {
             components.add(TextComponentString(changelogPrefix) + sponsor.getFormattedText(sponsorStyle))
         }
-        components.add(TextComponentString("\n"))
         return components
     }
 
