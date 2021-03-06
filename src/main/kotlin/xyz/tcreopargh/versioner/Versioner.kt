@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.NetworkCheckHandler
 import net.minecraftforge.fml.relauncher.Side
 import org.apache.logging.log4j.Logger
 import java.io.IOException
+import java.lang.IllegalStateException
 
 @Mod(
     modid = Versioner.MOD_ID,
@@ -23,7 +24,7 @@ object Versioner {
     const val VERSION = "1.0.0"
 
     var versionData: VersionData? = null
-    var isUpdateDialogShown = false
+    var isUpdateMessageShown = false
 
     var logger: Logger? = null
 

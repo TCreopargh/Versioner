@@ -13,10 +13,10 @@ import net.minecraftforge.common.config.Config.LangKey
 @JvmField
 var enableVersionChecking = true
 
-@LangKey("versioner.config.changelog_separator")
+@LangKey("versioner.config.changelog_prefix")
 @Config.Comment("Extra text added before each line of changelog")
 @JvmField
-var changelogSeparator = " - "
+var changelogPrefix = " - "
 
 @LangKey("versioner.config.read_timeout")
 @Config.Comment("How much time to read before the connection closes with a timeout error.")
@@ -49,10 +49,16 @@ var updateURL = ""
 var versionNotifications = VersionNotifications()
 
 class VersionNotifications {
-    @LangKey("versioner.config.notifications.show_main_menu_dialog")
-    @Config.Comment("Show a pop-up dialog when the game loads to main menu if an update is available?")
+
+    @LangKey("versioner.config.notifications.show_login_chat_message")
+    @Config.Comment("Display a chat message when logging into a world for the first time if an update is available?")
     @JvmField
-    var showMainMenuDialog = true
+    var showLoginChatUpdateNotification = true
+
+    @LangKey("versioner.config.notifications.show_welcome_message")
+    @Config.Comment("If 'welcomeMessage' key is defined in the JSON, display the message in chat when logging into a world")
+    @JvmField
+    var showWelcomeMessage = true
 }
 
 @LangKey("versioner.config.current_version_category")

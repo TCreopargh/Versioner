@@ -13,10 +13,10 @@ object NetworkHandler {
             InputStreamReader(url.openConnection().apply {
                 this.connectTimeout = versionCheckerConnectTimeout
                 this.readTimeout = versionCheckerReadTimeout
-            }.getInputStream())
+            }.getInputStream(), Charsets.UTF_8)
         )
         val stringBuilder = StringBuilder()
-        while(true) {
+        while (true) {
             val line: String = bufferedReader.readLine() ?: break
             stringBuilder.append(line)
         }

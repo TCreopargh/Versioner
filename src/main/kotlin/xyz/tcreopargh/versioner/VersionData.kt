@@ -4,16 +4,20 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import com.google.gson.stream.MalformedJsonException
+import org.apache.logging.log4j.Level
+import java.io.IOException
 import java.util.*
 
-data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Boolean = true) {
+data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true) {
     var versionName: String? = null
     var versionFormat: String? = null
-    var changelogs: ChangelogMap = null
+    var changelogs: ChangelogData? = null
     var versionCode = -1
-    var sponsors: List<String> = ArrayList()
+    var sponsors: SponsorData? = null
     var isReady: Boolean = false
     var variables: JsonObject? = null
+    var updateLink: String? = null
+    var welcomeMessage: String? = null
 
     @Deprecated("Use ready() instead", replaceWith = ReplaceWith("ready()"))
 
@@ -27,8 +31,10 @@ data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Bool
             "versionName" -> versionName.toString()
             "versionFormat" -> versionFormat.toString()
             "versionCode" -> versionCode.toString()
-            "sponsors" -> sponsorsText
-            "changelogs" -> changelogsText
+            "sponsors" -> sponsors.toString()
+            "changelogs" -> changelogs.toString()
+            "updateLink" -> updateLink.toString()
+            "welcomeMessage" -> welcomeMessage.toString()
             else ->
                 if (variables?.get(key)?.isJsonNull != false)
                     "null"
@@ -36,33 +42,39 @@ data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Bool
         }
     }
 
-    @Throws(MalformedJsonException::class, JsonSyntaxException::class)
+    @Throws(MalformedJsonException::class, JsonSyntaxException::class, java.lang.IllegalStateException::class)
     fun initialize() {
-        val jsonObj = versionJsonObject
         if (jsonObj.has("versionName")) {
-            val versionName = jsonObj["versionName"].asString
+            val versionName = jsonObj["versionName"]?.asString
             this.versionName = versionName
         }
         if (jsonObj.has("versionCode")) {
-            val versionCode = jsonObj["versionCode"].asInt
-            this.versionCode = versionCode
+            val versionCode = jsonObj["versionCode"]?.asInt
+            this.versionCode = versionCode ?: -1
         }
         if (jsonObj.has("versionFormat")) {
-            val versionFormat = jsonObj["versionFormat"].asString
+            val versionFormat = jsonObj["versionFormat"]?.asString
             this.versionFormat = versionFormat
         }
+        if (jsonObj.has("updateLink")) {
+            val updateLink = jsonObj["updateLink"]?.asString
+            this.updateLink = updateLink
+        }
+        if (jsonObj.has("welcomeMessage")) {
+            val welcomeMessage = jsonObj["welcomeMessage"].toString()
+            this.welcomeMessage = welcomeMessage
+        }
         if (jsonObj.has("changelogs")) {
-            val changelogs: ChangelogMap = LinkedHashMap()
-            val changelogsObj = jsonObj["changelogs"].asJsonObject
-            for ((key, value) in changelogsObj.entrySet()) {
-                val array = value.asJsonObject.getAsJsonArray(key)
-                val versionChangelog: MutableList<String> = ArrayList()
-                for (versionChangelogLine in array) {
-                    versionChangelog.add(versionChangelogLine.asString)
-                }
-                changelogs?.set(key, versionChangelog)
+            val obj = jsonObj["changelogs"]?.asJsonObject
+            if (obj != null) {
+                this.changelogs = ChangelogData(obj)
             }
-            this.changelogs = changelogs
+        }
+        if (jsonObj.has("sponsors")) {
+            val obj = jsonObj["sponsors"]?.asJsonObject
+            if (obj != null) {
+                this.sponsors = SponsorData(obj)
+            }
         }
         if (jsonObj.has("variables")) {
             this.variables = jsonObj["variables"].asJsonObject
@@ -72,7 +84,17 @@ data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Bool
 
     init {
         if (doInitialize) {
-            initialize()
+            try {
+                initialize()
+            } catch (e: Exception) {
+                when (e) {
+                    is IOException, is MalformedJsonException, is IllegalStateException -> {
+                        Versioner.logger?.log(Level.ERROR, e)
+                        Versioner.logger?.log(Level.ERROR, "Failed to initialize version data object.")
+                    }
+                    else -> throw e
+                }
+            }
         }
     }
 
@@ -85,7 +107,9 @@ data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Bool
                 "versionFormat",
                 "versionCode",
                 "sponsors",
-                "changelogs"
+                "changelogs",
+                "updateLink",
+                "welcomeMessage"
             )
         )
         for (key in possibleKeys) {
@@ -100,32 +124,25 @@ data class VersionData(val versionJsonObject: JsonObject, var doInitialize: Bool
         return keySet
     }
 
-    val sponsorsText: String
-        get() = java.lang.String.join("\n", sponsors)
-    val changelogsText: String
-        get() {
-            val builder = StringBuilder()
-            for ((key, value) in changelogs!!) {
-                builder.append(key).append(":\n")
-                for (line in value) {
-                    builder.append(changelogSeparator).append(line).append("\n")
-                }
-            }
-            if (builder.isNotEmpty()) {
-                builder.deleteCharAt(builder.length - 1)
-            }
-            return builder.toString()
-        }
-
-    fun isUpdateAvailable(): Boolean {
-        return when {
-            versionCode > 0 -> currentVersion.versionCode > versionCode
-            versionName == null -> false
-            else -> return compareVersionNames(currentVersion.versionName, versionName!!) < 0
-        }
+    fun isUpdateAvailable(): Boolean = when {
+        versionCode >= 0 -> this.versionCode > currentVersion.versionCode
+        versionName == null -> false
+        else -> compareVersionNames(this.versionName, currentVersion.versionName) < 0
     }
 
+    fun getVersionDiff(): Int? = if (this.versionCode >= 0) {
+        this.versionCode - currentVersion.versionCode
+    } else {
+        null
+    }
+
+    fun getCurrentChangelogs(): List<String?>? {
+        val version = this.versionName
+        return if (version != null) this.changelogs?.get(version) else null
+    }
+
+
     override fun toString(): String {
-        return versionJsonObject.toString()
+        return jsonObj.toString()
     }
 }
