@@ -26,12 +26,6 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
     var welcomeMessage: String? = null
     var sponsorMessage: String? = null
 
-    @Deprecated("Use ready() instead", replaceWith = ReplaceWith("ready()"))
-
-    fun VersionData?.ready(): Boolean {
-        return this?.isReady ?: false
-    }
-
     fun getEntryString(key: String): String {
         if (!isReady) return ""
         return when (key) {
@@ -45,7 +39,7 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
             "sponsorMessage" -> sponsorMessage.toString()
             else ->
                 if (variables?.get(key)?.isJsonNull != false)
-                    "null"
+                    ""
                 else variables?.get(key)?.toString().toString()
         }
     }
@@ -110,9 +104,9 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
         }
     }
 
-    fun getFormattedVersionName(format: String): String {
-        var formattedString = format
-        val possibleKeys = variableNamesSet()
+    fun getFormattedVersionName(): String {
+        var formattedString = versionFormat ?: ""
+        val possibleKeys: MutableSet<String> = HashSet(variableNamesSet())
         possibleKeys.addAll(
             listOf(
                 "versionName",
@@ -128,7 +122,7 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
         for (key in possibleKeys) {
             formattedString = formattedString.replace("%$key%", getEntryString(key), false)
         }
-        return format
+        return formattedString
     }
 
     fun variableNamesSet(): MutableSet<String> {

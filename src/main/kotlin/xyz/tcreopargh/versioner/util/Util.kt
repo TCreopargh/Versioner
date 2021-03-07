@@ -4,6 +4,7 @@
 package xyz.tcreopargh.versioner.util
 
 import com.google.gson.JsonParser
+import net.minecraft.server.management.PlayerList
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
 import xyz.tcreopargh.versioner.Versioner.versionData
@@ -17,9 +18,18 @@ import xyz.tcreopargh.versioner.data.SponsorCategory
 typealias ChangelogMap = MutableMap<String, List<String>>
 typealias SponsorList = MutableList<SponsorCategory>
 
+val currentVariables: MutableMap<String, String> = HashMap()
+
 operator fun ITextComponent.plus(t: ITextComponent): ITextComponent = this.appendSibling(t)
 operator fun ITextComponent.plus(s: String): ITextComponent = this.appendText(s)
 fun ITextComponent.br(): ITextComponent = this.appendText("\n")
+fun PlayerList.getAllPlayerNames(): List<String> {
+    val list: MutableList<String> = ArrayList()
+    players.forEach { v ->
+        list.add(v.name)
+    }
+    return list
+}
 
 fun i18n(s: String, vararg o: Any): ITextComponent =
     TextComponentTranslation(s, o)
@@ -93,6 +103,47 @@ fun showUpdateDialog() {
 }
 */
 
+fun getCurrentEntryString(key: String): String {
+    return when (key) {
+        "versionName" -> currentVersion.versionName
+        "versionFormat" -> currentVersion.versionFormat
+        "versionCode" -> currentVersion.versionCode.toString()
+        else -> currentVariables[key] ?: ""
+    }
+}
+
+fun saveVariables() {
+    for (entry in currentVersion.variables) {
+        var key: String? = null
+        var value: String? = null
+        for (i in entry.indices) {
+            if (entry[i] == '=' && i < entry.length - 1) {
+                key = entry.substring(0 until i)
+                value = entry.substring(i + 1)
+            }
+        }
+        if (key != null && value != null) {
+            currentVariables[key] = value
+        }
+    }
+}
+
+fun getCurrentFormattedVersion(): String {
+    var formattedString = currentVersion.versionFormat
+    val possibleKeys: MutableSet<String> = HashSet(currentVariables.keys)
+    possibleKeys.addAll(
+        listOf(
+            "versionName",
+            "versionFormat",
+            "versionCode"
+        )
+    )
+    for (key in possibleKeys) {
+        formattedString = formattedString.replace("%$key%", getCurrentEntryString(key), false)
+    }
+    return formattedString
+}
+
 /**
  * Using list because a large ITextComponent object can produce StackOverflowError
  */
@@ -109,7 +160,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
         color = TextFormatting.GOLD
     }) + TextComponentString(" ") +
         TextComponentString(
-            currentVersion.versionName
+            getCurrentFormattedVersion()
         ).setStyle(Style().apply {
             color = TextFormatting.YELLOW
         })
@@ -122,7 +173,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
         color = TextFormatting.DARK_GREEN
     }) + TextComponentString(" ") +
         TextComponentString(
-            versionData?.versionName ?: "N/A"
+            versionData?.getFormattedVersionName() ?: "N/A"
         ).setStyle(Style().apply {
             color = TextFormatting.GREEN
         }) + TextComponentString(" ")

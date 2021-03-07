@@ -1,24 +1,20 @@
 package xyz.tcreopargh.versioner.commands
 
-import com.sun.org.apache.xml.internal.security.utils.I18n
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.text.*
-import net.minecraftforge.client.IClientCommand
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import xyz.tcreopargh.versioner.Versioner.versionData
+import xyz.tcreopargh.versioner.util.getAllPlayerNames
 
 /**
  * @author TCreopargh
  */
 object CommandHandler {
 
-    @SideOnly(Side.CLIENT)
-    class SponsorsCommand : CommandBase(), IClientCommand {
+    class SponsorsCommand : CommandBase() {
         companion object {
             const val NAME = "sponsors"
             const val ARG_LIST = "list"
@@ -30,7 +26,7 @@ object CommandHandler {
         }
 
         override fun getUsage(p0: ICommandSender): String {
-            return I18n.translate("versioner.command.sponsors.usage")
+            return "versioner.command.sponsors.usage"
         }
 
         override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<out String>) {
@@ -79,14 +75,16 @@ object CommandHandler {
             args: Array<out String>,
             pos: BlockPos?
         ): MutableList<String> {
-            if (args.isEmpty()) {
-                return mutableListOf(ARG_LIST, ARG_CHECK)
+            if (args.size == 1) {
+                return getListOfStringsMatchingLastWord(args, ARG_LIST, ARG_CHECK)
+            } else if (args[0] == ARG_CHECK && args.size == 2) {
+                return getListOfStringsMatchingLastWord(args, server.playerList.getAllPlayerNames())
             }
             return mutableListOf()
         }
 
-        override fun allowUsageWithoutPrefix(p0: ICommandSender?, p1: String?): Boolean {
-            return false
+        override fun getRequiredPermissionLevel(): Int {
+            return 0
         }
     }
 }

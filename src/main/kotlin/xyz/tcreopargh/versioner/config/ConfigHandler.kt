@@ -66,6 +66,11 @@ class VersionNotifications {
     @Config.Comment("If 'welcomeMessage' key is defined in the JSON, display the message in chat when logging into a world")
     @JvmField
     var showWelcomeMessage = true
+
+    @LangKey("versioner.config.notifications.show_update_check_failed_message")
+    @Config.Comment("If true, displays an error message in chat if this mod is unable to fetch all update data.")
+    @JvmField
+    var showUpdateCheckFailedMessage = true
 }
 
 @LangKey("versioner.config.current_version_category")
@@ -91,5 +96,10 @@ class CurrentVersion {
     @Config.Comment("How to output formatted version name. Only used for displaying current version.")
     @JvmField
     var versionFormat = "%versionName%"
+
+    @LangKey("versioner.config.current_version.variables")
+    @Config.Comment("Variables to use when formatting current version. One entry per line, the format is key=value")
+    @JvmField
+    var variables: Array<String> = arrayOf()
 }
 
