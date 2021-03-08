@@ -44,9 +44,9 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 when (isUpdateAvailableOrNull()) {
                     true  -> "§b" + i18nSafe(
                         "versioner.variables.update_available.true",
-                        "§2" +
+                        "§e" +
                         i18nSafe("versioner.variables.update_available.latest",
-                            versionName ?: "§cN/A"
+                            "§a$versionName" ?: "§cN/A"
                         )
                     )
                     false -> "§a" + i18nSafe("versioner.variables.update_available.false")
