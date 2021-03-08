@@ -21,15 +21,15 @@ data class Sponsor(val name: String? = null, val uuid: UUID? = null) {
         return false
     }
 
+    fun getFormattedText(style: Style = Style()): ITextComponent {
+        return TextComponentString(name ?: uuid?.toString() ?: "null").setStyle(style)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is Sponsor) {
             return this.name == other.name && this.uuid == other.uuid
         }
         return false
-    }
-
-    fun getFormattedText(style: Style = Style()): ITextComponent {
-        return TextComponentString(name ?: uuid?.toString() ?: "null").setStyle(style)
     }
 
     override fun hashCode(): Int {

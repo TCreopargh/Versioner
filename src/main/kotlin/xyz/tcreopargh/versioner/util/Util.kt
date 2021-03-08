@@ -3,22 +3,29 @@
  */
 package xyz.tcreopargh.versioner.util
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonParser
+import crafttweaker.CraftTweakerAPI
+import crafttweaker.api.data.*
+import crafttweaker.api.minecraft.CraftTweakerMC
+import net.minecraft.nbt.JsonToNBT
+import net.minecraft.nbt.NBTException
 import net.minecraft.server.management.PlayerList
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
+import xyz.tcreopargh.versioner.Versioner
 import xyz.tcreopargh.versioner.Versioner.versionData
 import xyz.tcreopargh.versioner.commands.CommandHandler
-import xyz.tcreopargh.versioner.config.changelogPrefix
-import xyz.tcreopargh.versioner.config.currentVersion
-import xyz.tcreopargh.versioner.config.delimiter
-import xyz.tcreopargh.versioner.config.updateURL
+import xyz.tcreopargh.versioner.config.*
 import xyz.tcreopargh.versioner.data.SponsorCategory
+import kotlin.math.floor
 
 typealias ChangelogMap = MutableMap<String, List<String>>
 typealias SponsorList = MutableList<SponsorCategory>
 
-val currentVariables: MutableMap<String, String> = HashMap()
+const val CT_NAMESPACE = "mods.versioner."
+
+val currentVariables: MutableMap<String, IData?> = HashMap()
 
 operator fun ITextComponent.plus(t: ITextComponent): ITextComponent = this.appendSibling(t)
 operator fun ITextComponent.plus(s: String): ITextComponent = this.appendText(s)
@@ -58,58 +65,20 @@ fun compareVersionNames(a: String?, b: String?): Int {
     return 0
 }
 
-/*
-@Deprecated("This should not be used")
-fun showUpdateDialog() {
-    Thread {
-        val stamp: Long = System.currentTimeMillis()
-        while (true) {
-            Thread.sleep(500)
-            if (System.currentTimeMillis() - stamp > 1000 * 20) {
-                break
-            }
-            if (versionData?.isReady == true) {
-                val options = arrayOf(
-                    I18n.format("versioner.update_dialog_option.yes"),
-                    I18n.format("versioner.update_dialog_option.no")
-                )
-                val input = JOptionPane.showOptionDialog(
-                    null,
-                    I18n.format(
-                        "versioner.update_dialog_message",
-                        modpackName,
-                        versionData?.versionName,
-                        currentVersion.versionName
-                    ),
-                    I18n.format("versioner.update_dialog_title"),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]
-                )
-                if (input == 0) {
-                    if (Desktop.isDesktopSupported()) {
-                        val desktop = Desktop.getDesktop()
-                        try {
-                            desktop.browse(URI(updateURL))
-                        } catch (ignored: IOException) {
-                        } catch (ignored: URISyntaxException) {
-                        }
-                    }
-                }
-                break
-            }
-        }
-    }.apply {
-        name = "Versioner Update Dialog Thread"
-    }.start()
-}
-*/
-
 fun getCurrentEntryString(key: String): String {
     return when (key) {
         "versionName" -> currentVersion.versionName
         "versionFormat" -> currentVersion.versionFormat
         "versionCode" -> currentVersion.versionCode.toString()
-        else -> currentVariables[key] ?: ""
+        else -> currentVariables[key]?.toString() ?: ""
     }
+}
+
+/**
+ * I18n that simply returns the lang key on dedicated servers
+ */
+fun i18nSafe(key: String, vararg objects: Any): String {
+    return Versioner.proxy?.i18nSafe(key, *objects) ?: key
 }
 
 fun saveVariables() {
@@ -123,7 +92,7 @@ fun saveVariables() {
             }
         }
         if (key != null && value != null) {
-            currentVariables[key] = value
+            currentVariables[key] = getDataFromJsonElement(JsonParser().parse(value))
         }
     }
 }
@@ -143,6 +112,12 @@ fun getCurrentFormattedVersion(): String {
     }
     return formattedString
 }
+
+/**
+ * @return The update link used for click events
+ * 'updateLink' field in version data takes priority over the one in the config
+ */
+fun getUpdateLink(): String = versionData?.updateLink ?: updateURL
 
 /**
  * Using list because a large ITextComponent object can produce StackOverflowError
@@ -217,7 +192,7 @@ fun getUpdateChatMessage(): List<ITextComponent> {
             color = TextFormatting.AQUA
             bold = true
             underlined = true
-            clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, updateURL)
+            clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateLink())
         }
     )
 
@@ -278,5 +253,64 @@ fun getTextComponentFromJSON(msg: String): ITextComponent {
     } catch (ignored: Exception) {
     }
     return TextComponentString(msg)
+}
+
+fun jsonToData(json: String?): IData? {
+    try {
+        val tagCompound = JsonToNBT.getTagFromJson(json ?: "{}")
+        return CraftTweakerMC.getIData(tagCompound)
+    } catch (e: NBTException) {
+        CraftTweakerAPI.logError(e.message, e)
+    }
+    return null
+}
+
+fun getDataFromJsonElement(element: JsonElement?): IData {
+    if (element == null) {
+        return DataString("null")
+    }
+    when {
+        element.isJsonPrimitive -> {
+            val primitive = element.asJsonPrimitive
+            when {
+                primitive.isBoolean -> return DataBool(element.asBoolean)
+                primitive.isNumber  -> {
+                    val num: Double = element.asDouble
+                    if (num == floor(num)) {
+                        return DataInt(num.toInt())
+                    }
+                    return DataDouble(num)
+                }
+                primitive.isString  -> return DataString(element.asString ?: "null")
+            }
+        }
+        element.isJsonNull      -> return DataString("null")
+        element.isJsonArray     -> {
+            val list: MutableList<IData> = ArrayList()
+            for (component in element.asJsonArray) {
+                list.add(getDataFromJsonElement(component))
+            }
+            return DataList(list, false)
+        }
+        element.isJsonObject    -> {
+            val map: MutableMap<String, IData> = LinkedHashMap()
+            for ((key, value) in element.asJsonObject.entrySet()) {
+                map[key] = getDataFromJsonElement(value)
+            }
+            return DataMap(map, false)
+        }
+    }
+    return DataString(element.asString ?: "null")
+}
+
+fun getMainMenuTexts(): List<String> {
+    var list: MutableList<String>? = versionData?.menuText?.toMutableList()
+    if (list == null) {
+        list = mainMenu.textLines.asList().toMutableList()
+    }
+    for (i in list.indices) {
+        list[i] = versionData?.getFormattedString(list[i]) ?: list[i]
+    }
+    return list
 }
 

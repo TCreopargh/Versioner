@@ -31,7 +31,7 @@ object CommandHandler {
 
         override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<out String>) {
             when (args.getOrNull(0)) {
-                ARG_LIST -> {
+                ARG_LIST  -> {
                     val msg: MutableList<ITextComponent>? = versionData?.sponsors?.getFormattedText()
                     if (msg != null) {
                         for (line in msg) {
@@ -61,7 +61,7 @@ object CommandHandler {
                         }
                     }
                 }
-                else -> {
+                else      -> {
                     sender.sendMessage(TextComponentString(getUsage(sender)).setStyle(Style().apply {
                         color = TextFormatting.RED
                     }))

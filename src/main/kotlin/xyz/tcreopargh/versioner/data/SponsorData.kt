@@ -64,6 +64,15 @@ data class SponsorData(val jsonArray: JsonArray) {
         return null
     }
 
+    fun isPlayerInCategory(player: EntityPlayer, category: String): Boolean {
+        for (cat in categoryList) {
+            if (player in cat && category == cat.name) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun isSponsor(player: EntityPlayer): Boolean = checkPlayer(player) != null
 
     operator fun get(categoryName: String): SponsorCategory? {

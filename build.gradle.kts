@@ -55,8 +55,9 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50")
-    compile("net.shadowfacts:Forgelin:1.8.4")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50")
+    implementation("net.shadowfacts:Forgelin:1.8.4")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 // processResources
@@ -71,9 +72,11 @@ tasks.withType<Jar> {
 
     // replace stuff in mcmod.info, nothing else
     filesMatching("/mcmod.info") {
-        expand(mapOf(
-            "version" to project.version,
-            "mcversion" to project.minecraft.version
-        ))
+        expand(
+            mapOf(
+                "version" to project.version,
+                "mcversion" to project.minecraft.version
+            )
+        )
     }
 }

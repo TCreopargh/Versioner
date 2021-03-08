@@ -8,8 +8,10 @@ import org.apache.logging.log4j.Level
 import xyz.tcreopargh.versioner.Versioner
 import xyz.tcreopargh.versioner.config.currentVersion
 import xyz.tcreopargh.versioner.util.compareVersionNames
+import xyz.tcreopargh.versioner.util.i18nSafe
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author TCreopargh
@@ -25,23 +27,44 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
     var updateLink: String? = null
     var welcomeMessage: String? = null
     var sponsorMessage: String? = null
+    var menuText: List<String>? = null
 
     fun getEntryString(key: String): String {
         if (!isReady) return ""
         return when (key) {
-            "versionName" -> versionName.toString()
-            "versionFormat" -> versionFormat.toString()
-            "versionCode" -> versionCode.toString()
-            "sponsors" -> sponsors.toString()
-            "changelogs" -> changelogs.toString()
-            "updateLink" -> updateLink.toString()
-            "welcomeMessage" -> welcomeMessage.toString()
-            "sponsorMessage" -> sponsorMessage.toString()
-            else ->
+            "versionName"       -> versionName.toString()
+            "versionFormat"     -> versionFormat.toString()
+            "versionCode"       -> versionCode.toString()
+            "sponsors"          -> sponsors.toString()
+            "changelogs"        -> changelogs.toString()
+            "updateLink"        -> updateLink.toString()
+            "welcomeMessage"    -> welcomeMessage.toString()
+            "sponsorMessage"    -> sponsorMessage.toString()
+            "isUpdateAvailable" ->
+                when (isUpdateAvailableOrNull()) {
+                    true  -> "§b" + i18nSafe(
+                        "versioner.variables.update_available.true",
+                        "§2" +
+                        i18nSafe("versioner.variables.update_available.latest",
+                            versionName ?: "§cN/A"
+                        )
+                    )
+                    false -> "§a" + i18nSafe("versioner.variables.update_available.false")
+                    else  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
+                }
+            else                ->
                 if (variables?.get(key)?.isJsonNull != false)
                     ""
-                else variables?.get(key)?.toString().toString()
+                else variables?.get(key)?.toString() ?: ""
         }
+    }
+
+    fun getVariable(name: String): JsonElement? {
+        return variables?.get(name)
+    }
+
+    fun getVariableString(name: String): String? {
+        return variables?.get(name)?.toString()
     }
 
     @Throws(MalformedJsonException::class, JsonSyntaxException::class, java.lang.IllegalStateException::class)
@@ -76,6 +99,19 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 this.changelogs = ChangelogData(obj)
             }
         }
+        if (jsonObj.has("menuText")) {
+            val array = jsonObj["menuText"]?.asJsonArray
+            val list: MutableList<String> = ArrayList()
+            if (array != null) {
+                for (element in array) {
+                    val str = element.asString
+                    if (str != null) {
+                        array.add(str)
+                    }
+                }
+            }
+            this.menuText = list
+        }
         if (jsonObj.has("sponsors")) {
             val arr = jsonObj["sponsors"]?.asJsonArray
             if (arr != null) {
@@ -98,14 +134,14 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                         Versioner.logger?.log(Level.ERROR, e)
                         Versioner.logger?.log(Level.ERROR, "Failed to initialize version data object.")
                     }
-                    else -> throw e
+                    else                                                                -> throw e
                 }
             }
         }
     }
 
-    fun getFormattedVersionName(): String {
-        var formattedString = versionFormat ?: ""
+    fun getFormattedString(format: String): String {
+        var formattedString = format
         val possibleKeys: MutableSet<String> = HashSet(variableNamesSet())
         possibleKeys.addAll(
             listOf(
@@ -116,7 +152,8 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 "changelogs",
                 "updateLink",
                 "welcomeMessage",
-                "sponsorMessage"
+                "sponsorMessage",
+                "isUpdateAvailable"
             )
         )
         for (key in possibleKeys) {
@@ -125,16 +162,20 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
         return formattedString
     }
 
+    fun getFormattedVersionName(): String = getFormattedString(versionFormat ?: "")
+
     fun variableNamesSet(): MutableSet<String> {
         val keySet: MutableSet<String> = HashSet()
         variables?.entrySet()?.forEach { e: Map.Entry<String, JsonElement?> -> keySet.add(e.key) }
         return keySet
     }
 
-    fun isUpdateAvailable(): Boolean = when {
-        versionCode >= 0 -> this.versionCode > currentVersion.versionCode
-        versionName == null -> false
-        else -> compareVersionNames(this.versionName, currentVersion.versionName) < 0
+    fun isUpdateAvailable(): Boolean = isUpdateAvailableOrNull() ?: false
+
+    fun isUpdateAvailableOrNull(): Boolean? = when {
+        versionCode >= 0    -> this.versionCode > currentVersion.versionCode
+        versionName == null -> null
+        else                -> compareVersionNames(this.versionName, currentVersion.versionName) < 0
     }
 
     fun getVersionDiff(): Int? = if (this.versionCode >= 0) {

@@ -10,13 +10,11 @@ import net.minecraftforge.common.config.ConfigManager
 import net.minecraftforge.event.entity.EntityJoinWorldEvent
 import net.minecraftforge.fml.client.event.ConfigChangedEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import xyz.tcreopargh.versioner.Versioner
 import xyz.tcreopargh.versioner.Versioner.versionData
-import xyz.tcreopargh.versioner.commands.CommandHandler
 import xyz.tcreopargh.versioner.config.versionNotifications
 import xyz.tcreopargh.versioner.util.getTextComponentFromJSON
 import xyz.tcreopargh.versioner.util.getUpdateChatMessage

@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.network.NetworkCheckHandler
 import net.minecraftforge.fml.relauncher.Side
 import org.apache.logging.log4j.Logger
@@ -79,7 +78,7 @@ object Versioner {
 
     @Mod.EventHandler
     fun onServerStarting(event: FMLServerStartingEvent) {
-        Versioner.logger?.info("Registering Command: " + CommandHandler.SponsorsCommand.NAME)
+        logger?.info("Registering Command: " + CommandHandler.SponsorsCommand.NAME)
         event.registerServerCommand(CommandHandler.SponsorsCommand())
     }
 }

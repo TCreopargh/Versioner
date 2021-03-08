@@ -2,12 +2,10 @@ package xyz.tcreopargh.versioner.proxy
 
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
-import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import xyz.tcreopargh.versioner.Versioner
-import xyz.tcreopargh.versioner.commands.CommandHandler
 import xyz.tcreopargh.versioner.config.versionDataURL
 import xyz.tcreopargh.versioner.data.VersionData
 import xyz.tcreopargh.versioner.util.NetworkHandler
@@ -22,6 +20,7 @@ open class CommonProxy {
     open fun init(event: FMLInitializationEvent?) {
         Thread {
             try {
+                Versioner.logger?.info("Starting to fetch version data from $versionDataURL")
                 val jsonString = NetworkHandler.readToString(versionDataURL)
                 val jsonObj = JsonParser().parse(jsonString).asJsonObject
                 Versioner.versionData = VersionData(jsonObj)
@@ -47,5 +46,9 @@ open class CommonProxy {
 
     open fun postInit(event: FMLPostInitializationEvent?) {
 
+    }
+
+    open fun i18nSafe(key: String, vararg objects: Any): String {
+        return key
     }
 }

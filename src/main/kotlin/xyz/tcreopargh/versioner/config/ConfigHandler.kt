@@ -2,6 +2,7 @@
  * @author TCreopargh
  */
 @file:Config(modid = "versioner")
+
 package xyz.tcreopargh.versioner.config
 
 import net.minecraftforge.common.config.Config
@@ -41,7 +42,10 @@ var modpackName = ""
 var versionDataURL = ""
 
 @LangKey("versioner.config.update_url")
-@Config.Comment("The url that is opened when the user clicks on update button, KEEP http:// or https://")
+@Config.Comment(
+    "The url that is opened when the user clicks on update button, KEEP http:// or https://",
+    "Note: This can be overridden by '"
+)
 @JvmField
 var updateURL = ""
 
@@ -103,3 +107,62 @@ class CurrentVersion {
     var variables: Array<String> = arrayOf()
 }
 
+@LangKey("versioner.config.mainmenu_category")
+@Config.Comment(
+    "Config for main menu renders"
+)
+@JvmField
+var mainMenu = MainMenu()
+
+class MainMenu {
+
+    @LangKey("versioner.config.mainmenu.enable")
+    @Config.Comment(
+        "Whether to enable main menu rendering added by this mod at all or not. If set to false, all options below " +
+            "will not work."
+    )
+    @JvmField
+    var enableMainMenu = true
+
+    @LangKey("versioner.config.mainmenu.text_position")
+    @Config.Comment(
+        "Where to place the main menu text. Must be one of these: 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', " +
+            "'BOTTOM_RIGHT'"
+    )
+    @JvmField
+    var menuTextPosition = "TOP_LEFT"
+
+    @LangKey("versioner.config.mainmenu.margin_horizontal")
+    @Config.Comment(
+        "How much space between main menu text and the border of the screen. (Horizontal)"
+    )
+    @JvmField
+    var marginHorizontal = 2
+
+
+    @LangKey("versioner.config.mainmenu.margin_vertical")
+    @Config.Comment(
+        "How much space between main menu text and the border of the screen. (Vertical)"
+    )
+    @JvmField
+    var marginVertical = 2
+
+    @LangKey("versioner.config.mainmenu.text_color")
+    @Config.Comment(
+        "Default color of the main menu text, although you can always use color codes to override this.",
+        "Must be converted into a decimal integer. (0xffffff -> 16777215)"
+    )
+    @JvmField
+    var textColor = 0xffffff
+
+    @LangKey("versioner.config.mainmenu.text_lines")
+    @Config.Comment(
+        "Text to display on the main menu. You can use variables like %versionName% in the string.",
+        "Note: This can get overridden by 'menuText' field in the fetched version data JSON!"
+    )
+    @JvmField
+    var textLines: Array<String> = arrayOf(
+        "§eVersion§f: §9%versionName%",
+        "%isUpdateAvailable%"
+    )
+}
