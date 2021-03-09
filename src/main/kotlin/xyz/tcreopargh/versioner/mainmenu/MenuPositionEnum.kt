@@ -3,18 +3,23 @@ package xyz.tcreopargh.versioner.mainmenu
 import org.apache.logging.log4j.Level
 import xyz.tcreopargh.versioner.Versioner
 
-enum class MenuPosition {
+enum class MenuPositionEnum {
 
     TOP_LEFT,
     TOP_RIGHT,
     BOTTOM_LEFT,
-    BOTTOM_RIGHT;
+    BOTTOM_RIGHT,
+    TOP_CENTER,
+    BOTTOM_CENTER,
+    CENTER_LEFT,
+    CENTER_RIGHT,
+    CENTER;
 
     companion object {
-        fun fromString(value: String): MenuPosition {
+        fun fromString(value: String): MenuPositionEnum {
             var ret = TOP_LEFT
             try {
-                ret = valueOf(value)
+                ret = valueOf(value.toUpperCase())
             } catch (e: IllegalArgumentException) {
                 Versioner.logger?.log(
                     Level.ERROR, "$value is not a valid menu position! " +

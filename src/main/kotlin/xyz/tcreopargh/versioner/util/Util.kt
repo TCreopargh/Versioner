@@ -3,6 +3,7 @@
  */
 package xyz.tcreopargh.versioner.util
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import crafttweaker.CraftTweakerAPI
@@ -13,6 +14,7 @@ import net.minecraft.nbt.NBTException
 import net.minecraft.server.management.PlayerList
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
+import net.minecraft.util.text.event.HoverEvent
 import xyz.tcreopargh.versioner.Versioner
 import xyz.tcreopargh.versioner.Versioner.versionData
 import xyz.tcreopargh.versioner.commands.CommandHandler
@@ -67,9 +69,9 @@ fun compareVersionNames(a: String?, b: String?): Int {
 
 fun getCurrentEntryString(key: String): String {
     return when (key) {
-        "versionName" -> currentVersion.versionName
-        "versionFormat" -> currentVersion.versionFormat
-        "versionCode" -> currentVersion.versionCode.toString()
+        "currentVersionName" -> currentVersion.versionName
+        "currentVersionCode" -> currentVersion.versionCode.toString()
+        "isUpdateAvailable" -> "§c" + i18nSafe("versioner.variables.update_available.fail")
         else -> currentVariables[key]?.toString() ?: ""
     }
 }
@@ -97,21 +99,32 @@ fun saveVariables() {
     }
 }
 
-fun getCurrentFormattedVersion(): String {
-    var formattedString = currentVersion.versionFormat
+fun getFormattedString(format: String): String =
+    if (versionData?.isReady == true) {
+        versionData?.getFormattedString(format) ?: format
+    } else {
+        getCurrentFormattedString(format)
+    }
+
+
+fun getCurrentFormattedString(format: String): String {
+    var formattedString = format
     val possibleKeys: MutableSet<String> = HashSet(currentVariables.keys)
     possibleKeys.addAll(
         listOf(
-            "versionName",
-            "versionFormat",
-            "versionCode"
+            "currentVersionName",
+            "currentVersionCode",
+            "isUpdateAvailable"
         )
     )
     for (key in possibleKeys) {
         formattedString = formattedString.replace("%$key%", getCurrentEntryString(key), false)
     }
     return formattedString
+
 }
+
+fun getCurrentFormattedVersion(): String = getCurrentFormattedString(currentVersion.versionFormat)
 
 /**
  * @return The update link used for click events
@@ -193,6 +206,12 @@ fun getUpdateChatMessage(): List<ITextComponent> {
             bold = true
             underlined = true
             clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateLink())
+            hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                TextComponentTranslation("versioner.variables.update_link_tooltip")
+                    .setStyle(Style().apply {
+                        color = TextFormatting.YELLOW
+                    })
+            )
         }
     )
 
@@ -204,6 +223,12 @@ fun getUpdateChatMessage(): List<ITextComponent> {
             clickEvent = ClickEvent(
                 ClickEvent.Action.RUN_COMMAND,
                 "/${CommandHandler.SponsorsCommand.NAME} ${CommandHandler.SponsorsCommand.ARG_LIST}"
+            )
+            hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                TextComponentTranslation("versioner.variables.sponsors_list_tooltip")
+                    .setStyle(Style().apply {
+                        color = TextFormatting.YELLOW
+                    })
             )
         })
     }
@@ -304,13 +329,41 @@ fun getDataFromJsonElement(element: JsonElement?): IData {
 }
 
 fun getMainMenuTexts(): List<String> {
-    var list: MutableList<String>? = versionData?.menuText?.toMutableList()
+    var list: MutableList<String>? = versionData?.mainMenu?.text?.toMutableList()
     if (list == null) {
         list = mainMenu.textLines.asList().toMutableList()
     }
     for (i in list.indices) {
-        list[i] = versionData?.getFormattedString(list[i]) ?: list[i]
+        list[i] = getFormattedString(list[i])
     }
     return list
 }
 
+fun getMainMenuTooltipTexts(): List<String> {
+    var list: MutableList<String>? = versionData?.mainMenu?.tooltipText?.toMutableList()
+    if (list == null) {
+        list = mainMenu.tooltipText.asList().toMutableList()
+    }
+    for (i in list.indices) {
+        list[i] = getFormattedString(list[i])
+    }
+    return list
+}
+
+fun getClickLink(): String {
+    val link = versionData?.mainMenu?.clickLink ?: mainMenu.clickLink
+    return if (link == "") getUpdateLink() else link
+}
+
+fun jsonStringArrayToList(array: JsonArray?): List<String> {
+    val list: MutableList<String> = ArrayList()
+    if (array != null) {
+        for (element in array) {
+            val str = element.asString
+            if (str != null) {
+                array.add(str)
+            }
+        }
+    }
+    return list
+}

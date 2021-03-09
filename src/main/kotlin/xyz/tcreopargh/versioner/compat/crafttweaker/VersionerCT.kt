@@ -36,7 +36,7 @@ object VersionerCT {
 
     @ZenMethod
     @JvmStatic
-    fun getFormattedString(format: String?): String? = versionData?.getFormattedString(format ?: "")
+    fun getFormattedString(format: String?): String? = getFormattedString(format ?: "")
 
     @ZenMethod
     @JvmStatic
@@ -52,7 +52,7 @@ object VersionerCT {
 
     @ZenMethod
     @JvmStatic
-    fun getUpdateLink(): String? = versionData?.updateLink
+    fun getUpdateLink(): String? = getUpdateLink()
 
     @ZenMethod
     @JvmStatic

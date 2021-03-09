@@ -11,7 +11,6 @@ import xyz.tcreopargh.versioner.util.compareVersionNames
 import xyz.tcreopargh.versioner.util.i18nSafe
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * @author TCreopargh
@@ -27,32 +26,35 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
     var updateLink: String? = null
     var welcomeMessage: String? = null
     var sponsorMessage: String? = null
-    var menuText: List<String>? = null
+    var mainMenu: MainMenuData? = null
 
     fun getEntryString(key: String): String {
         if (!isReady) return ""
         return when (key) {
-            "versionName"       -> versionName.toString()
-            "versionFormat"     -> versionFormat.toString()
-            "versionCode"       -> versionCode.toString()
-            "sponsors"          -> sponsors.toString()
-            "changelogs"        -> changelogs.toString()
-            "updateLink"        -> updateLink.toString()
-            "welcomeMessage"    -> welcomeMessage.toString()
-            "sponsorMessage"    -> sponsorMessage.toString()
-            "isUpdateAvailable" ->
+            "currentVersionName"   -> currentVersion.versionName
+            "currentVersionCode"   -> currentVersion.versionCode.toString()
+            "versionName"          -> versionName.toString()
+            "versionFormat"        -> versionFormat.toString()
+            "versionCode"          -> versionCode.toString()
+            "sponsors"             -> sponsors.toString()
+            "changelogs"           -> changelogs.toString()
+            "updateLink"           -> updateLink.toString()
+            "welcomeMessage"       -> welcomeMessage.toString()
+            "sponsorMessage"       -> sponsorMessage.toString()
+            "isUpdateAvailable"    ->
                 when (isUpdateAvailableOrNull()) {
                     true  -> "§b" + i18nSafe(
                         "versioner.variables.update_available.true",
                         "§e" +
-                        i18nSafe("versioner.variables.update_available.latest",
-                            "§a" + (versionName ?: "§cN/A")
-                        )
+                            i18nSafe(
+                                "versioner.variables.update_available.latest",
+                                "§a" + (versionName ?: "§cN/A")
+                            )
                     )
                     false -> "§a" + i18nSafe("versioner.variables.update_available.false")
                     else  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
                 }
-            else                ->
+            else                   ->
                 if (variables?.get(key)?.isJsonNull != false)
                     ""
                 else variables?.get(key)?.toString() ?: ""
@@ -99,18 +101,11 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 this.changelogs = ChangelogData(obj)
             }
         }
-        if (jsonObj.has("menuText")) {
-            val array = jsonObj["menuText"]?.asJsonArray
-            val list: MutableList<String> = ArrayList()
-            if (array != null) {
-                for (element in array) {
-                    val str = element.asString
-                    if (str != null) {
-                        array.add(str)
-                    }
-                }
+        if (jsonObj.has("mainmenu")) {
+            val obj = jsonObj["mainmenu"]?.asJsonObject
+            if (obj != null) {
+                this.mainMenu = MainMenuData(obj)
             }
-            this.menuText = list
         }
         if (jsonObj.has("sponsors")) {
             val arr = jsonObj["sponsors"]?.asJsonArray
@@ -146,14 +141,16 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
         possibleKeys.addAll(
             listOf(
                 "versionName",
-                "versionFormat",
                 "versionCode",
                 "sponsors",
                 "changelogs",
                 "updateLink",
                 "welcomeMessage",
                 "sponsorMessage",
-                "isUpdateAvailable"
+                "isUpdateAvailable",
+                "currentVersionName",
+                "currentVersionFormat",
+                "currentVersionCode"
             )
         )
         for (key in possibleKeys) {

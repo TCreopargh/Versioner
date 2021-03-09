@@ -99,7 +99,7 @@ class CurrentVersion {
     @LangKey("versioner.config.current_version.version_format")
     @Config.Comment("How to output formatted version name. Only used for displaying current version.")
     @JvmField
-    var versionFormat = "%versionName%"
+    var versionFormat = "%currentVersionName%"
 
     @LangKey("versioner.config.current_version.variables")
     @Config.Comment("Variables to use when formatting current version. One entry per line, the format is key=value")
@@ -127,14 +127,15 @@ class MainMenu {
     @LangKey("versioner.config.mainmenu.text_position")
     @Config.Comment(
         "Where to place the main menu text. Must be one of these: 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', " +
-            "'BOTTOM_RIGHT'"
+            "'BOTTOM_RIGHT', 'TOP_CENTER', 'BOTTOM_CENTER', 'CENTER_LEFT', 'CENTER_RIGHT', 'CENTER'"
     )
     @JvmField
     var menuTextPosition = "TOP_LEFT"
 
     @LangKey("versioner.config.mainmenu.margin_horizontal")
     @Config.Comment(
-        "How much space between main menu text and the border of the screen. (Horizontal)"
+        "How much space between main menu text and the border of the screen. (Horizontal) (Ignored when text position" +
+            " is CENTER)"
     )
     @JvmField
     var marginHorizontal = 2
@@ -142,7 +143,8 @@ class MainMenu {
 
     @LangKey("versioner.config.mainmenu.margin_vertical")
     @Config.Comment(
-        "How much space between main menu text and the border of the screen. (Vertical)"
+        "How much space between main menu text and the border of the screen. (Vertical) (Ignored when text position" +
+            " is CENTER)"
     )
     @JvmField
     var marginVertical = 2
@@ -158,11 +160,32 @@ class MainMenu {
     @LangKey("versioner.config.mainmenu.text_lines")
     @Config.Comment(
         "Text to display on the main menu. You can use variables like %versionName% in the string.",
-        "Note: This can get overridden by 'menuText' field in the fetched version data JSON!"
+        "Note: This can get overridden by the fetched version data JSON!"
     )
+
     @JvmField
     var textLines: Array<String> = arrayOf(
-        "§eVersion§f: §9%versionName%",
+        "§eVersion§f: §9%currentVersionName%",
         "%isUpdateAvailable%"
     )
+
+    @LangKey("versioner.config.mainmenu.tooltip_text")
+    @Config.Comment(
+        "Text to display when hovering mouse over the text, as tooltips.",
+        "Note: This can get overridden by the fetched version data JSON!"
+    )
+    @JvmField
+    var tooltipText: Array<String> = arrayOf(
+        "§eCurrent Version§f: §6%currentVersionName% (%currentVersionCode%)",
+        "§2Latest Version§f: §2%versionName% (%versionCode%)",
+        "§9§nClick for update link!"
+    )
+
+    @LangKey("versioner.config.mainmenu.click_link")
+    @Config.Comment(
+        "When the user click on the text, they will be sent to this link.",
+        "Leave it empty to let it be the same as updateURL, or 'null' to not send them a link at all"
+    )
+    @JvmField
+    var clickLink = ""
 }
