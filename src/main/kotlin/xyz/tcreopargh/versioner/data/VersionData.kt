@@ -7,6 +7,7 @@ import com.google.gson.stream.MalformedJsonException
 import org.apache.logging.log4j.Level
 import xyz.tcreopargh.versioner.Versioner
 import xyz.tcreopargh.versioner.config.currentVersion
+import xyz.tcreopargh.versioner.config.modpackName
 import xyz.tcreopargh.versioner.util.compareVersionNames
 import xyz.tcreopargh.versioner.util.i18nSafe
 import java.io.IOException
@@ -31,17 +32,18 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
     fun getEntryString(key: String): String {
         if (!isReady) return ""
         return when (key) {
-            "currentVersionName"   -> currentVersion.versionName
-            "currentVersionCode"   -> currentVersion.versionCode.toString()
-            "versionName"          -> versionName.toString()
-            "versionFormat"        -> versionFormat.toString()
-            "versionCode"          -> versionCode.toString()
-            "sponsors"             -> sponsors.toString()
-            "changelogs"           -> changelogs.toString()
-            "updateLink"           -> updateLink.toString()
-            "welcomeMessage"       -> welcomeMessage.toString()
-            "sponsorMessage"       -> sponsorMessage.toString()
-            "isUpdateAvailable"    ->
+            "currentVersionName" -> currentVersion.versionName
+            "currentVersionCode" -> currentVersion.versionCode.toString()
+            "versionName"        -> versionName.toString()
+            "versionFormat"      -> versionFormat.toString()
+            "versionCode"        -> versionCode.toString()
+            "sponsors"           -> sponsors.toString()
+            "changelogs"         -> changelogs.toString()
+            "updateLink"         -> updateLink.toString()
+            "welcomeMessage"     -> welcomeMessage.toString()
+            "sponsorMessage"     -> sponsorMessage.toString()
+            "modpackName"        -> modpackName
+            "isUpdateAvailable"  ->
                 when (isUpdateAvailableOrNull()) {
                     true  -> "§b" + i18nSafe(
                         "versioner.variables.update_available.true",
@@ -54,7 +56,7 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                     false -> "§a" + i18nSafe("versioner.variables.update_available.false")
                     else  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
                 }
-            else                   ->
+            else                 ->
                 if (variables?.get(key)?.isJsonNull != false)
                     ""
                 else variables?.get(key)?.toString() ?: ""
@@ -150,7 +152,8 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 "isUpdateAvailable",
                 "currentVersionName",
                 "currentVersionFormat",
-                "currentVersionCode"
+                "currentVersionCode",
+                "modpackName"
             )
         )
         for (key in possibleKeys) {

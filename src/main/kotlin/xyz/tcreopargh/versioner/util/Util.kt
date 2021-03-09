@@ -6,11 +6,7 @@ package xyz.tcreopargh.versioner.util
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
-import crafttweaker.CraftTweakerAPI
 import crafttweaker.api.data.*
-import crafttweaker.api.minecraft.CraftTweakerMC
-import net.minecraft.nbt.JsonToNBT
-import net.minecraft.nbt.NBTException
 import net.minecraft.server.management.PlayerList
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
@@ -71,8 +67,9 @@ fun getCurrentEntryString(key: String): String {
     return when (key) {
         "currentVersionName" -> currentVersion.versionName
         "currentVersionCode" -> currentVersion.versionCode.toString()
-        "isUpdateAvailable" -> "§c" + i18nSafe("versioner.variables.update_available.fail")
-        else -> currentVariables[key]?.toString() ?: ""
+        "isUpdateAvailable"  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
+        "modpackName"        -> modpackName
+        else                 -> currentVariables[key]?.toString() ?: ""
     }
 }
 
@@ -114,7 +111,8 @@ fun getCurrentFormattedString(format: String): String {
         listOf(
             "currentVersionName",
             "currentVersionCode",
-            "isUpdateAvailable"
+            "isUpdateAvailable",
+            "modpackName"
         )
     )
     for (key in possibleKeys) {
@@ -206,7 +204,8 @@ fun getUpdateChatMessage(): List<ITextComponent> {
             bold = true
             underlined = true
             clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateLink())
-            hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT,
+            hoverEvent = HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
                 TextComponentTranslation("versioner.variables.update_link_tooltip")
                     .setStyle(Style().apply {
                         color = TextFormatting.YELLOW
@@ -224,7 +223,8 @@ fun getUpdateChatMessage(): List<ITextComponent> {
                 ClickEvent.Action.RUN_COMMAND,
                 "/${CommandHandler.SponsorsCommand.NAME} ${CommandHandler.SponsorsCommand.ARG_LIST}"
             )
-            hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT,
+            hoverEvent = HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
                 TextComponentTranslation("versioner.variables.sponsors_list_tooltip")
                     .setStyle(Style().apply {
                         color = TextFormatting.YELLOW
@@ -278,16 +278,6 @@ fun getTextComponentFromJSON(msg: String): ITextComponent {
     } catch (ignored: Exception) {
     }
     return TextComponentString(msg)
-}
-
-fun jsonToData(json: String?): IData? {
-    try {
-        val tagCompound = JsonToNBT.getTagFromJson(json ?: "{}")
-        return CraftTweakerMC.getIData(tagCompound)
-    } catch (e: NBTException) {
-        CraftTweakerAPI.logError(e.message, e)
-    }
-    return null
 }
 
 fun getDataFromJsonElement(element: JsonElement?): IData {
