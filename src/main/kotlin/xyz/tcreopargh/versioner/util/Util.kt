@@ -23,7 +23,7 @@ typealias SponsorList = MutableList<SponsorCategory>
 
 const val CT_NAMESPACE = "mods.versioner."
 
-val currentVariables: MutableMap<String, IData?> = HashMap()
+val currentVariables: MutableMap<String, JsonElement?> = HashMap()
 
 operator fun ITextComponent.plus(t: ITextComponent): ITextComponent = this.appendSibling(t)
 operator fun ITextComponent.plus(s: String): ITextComponent = this.appendText(s)
@@ -86,12 +86,12 @@ fun saveVariables() {
         var value: String? = null
         for (i in entry.indices) {
             if (entry[i] == '=' && i < entry.length - 1) {
-                key = entry.substring(0 until i)
+                key = entry.substring(0 until i).trim()
                 value = entry.substring(i + 1)
             }
         }
         if (key != null && value != null) {
-            currentVariables[key] = getDataFromJsonElement(JsonParser().parse(value))
+            currentVariables[key] = JsonParser().parse(value)
         }
     }
 }

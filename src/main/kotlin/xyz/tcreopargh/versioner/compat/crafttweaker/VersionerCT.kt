@@ -4,10 +4,8 @@ import crafttweaker.annotations.ZenRegister
 import crafttweaker.api.data.IData
 import crafttweaker.api.minecraft.CraftTweakerMC
 import crafttweaker.api.text.ITextComponent
-import stanhebben.zenscript.annotations.OperatorType
 import stanhebben.zenscript.annotations.ZenClass
 import stanhebben.zenscript.annotations.ZenMethod
-import stanhebben.zenscript.annotations.ZenOperator
 import xyz.tcreopargh.versioner.Versioner.versionData
 import xyz.tcreopargh.versioner.config.modpackName
 import xyz.tcreopargh.versioner.util.CT_NAMESPACE
@@ -105,7 +103,10 @@ object VersionerCT {
     fun getMainMenuTextTooltip(): List<String> = getMainMenuTextTooltip()
 
     @ZenMethod
-    @ZenOperator(OperatorType.INDEXGET)
+    @JvmStatic
+    fun hasVariable(name: String): Boolean = versionData?.variables?.has(name) ?: false
+
+    @ZenMethod
     @JvmStatic
     fun getVariable(name: String): IData = getDataFromJsonElement(versionData?.getVariable(name))
 }
