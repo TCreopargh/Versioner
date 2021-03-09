@@ -28,10 +28,11 @@ class SponsorsCT(val internal: SponsorData) {
         }
         return false
     }
+
     @ZenMethod
     fun isSponsor(player: IPlayer): Boolean {
         val mcPlayer = CraftTweakerMC.getPlayer(player)
-        if(mcPlayer != null) {
+        if (mcPlayer != null) {
             return internal.isSponsor(mcPlayer)
         }
         return false

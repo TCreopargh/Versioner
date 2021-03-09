@@ -1,6 +1,5 @@
 package xyz.tcreopargh.versioner.compat.crafttweaker
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import crafttweaker.annotations.ZenRegister
 import crafttweaker.api.data.IData
 import stanhebben.zenscript.annotations.ZenClass

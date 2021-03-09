@@ -45,12 +45,13 @@ open class GuiLabel(
 
     open fun getStringWidth(): Int {
         val i = getLongestLineIndex()
-        return if(i < texts.size) {
+        return if (i < texts.size) {
             fontRenderer.getStringWidth(texts[getLongestLineIndex()])
         } else {
             0
         }
     }
+
     open fun getStringHeight() = STRING_HEIGHT * texts.size
 
     open fun getStartingPosition() = when (pos) {
@@ -104,7 +105,7 @@ open class GuiLabel(
 
     open fun mouseClicked(mousePos: Coords, mouseButton: Int) {
         if (hovered(mousePos)) {
-            if(getClickLink() == "null") {
+            if (getClickLink() == "null") {
                 return
             }
             mc.displayGuiScreen(
