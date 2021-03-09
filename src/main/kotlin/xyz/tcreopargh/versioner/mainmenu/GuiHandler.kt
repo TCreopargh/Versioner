@@ -59,7 +59,7 @@ object GuiHandler {
 
     @SubscribeEvent
     fun onMainMenuClick(event: GuiScreenEvent.MouseInputEvent) {
-        if (!isMainMenu(event.gui) && !Mouse.isButtonDown(0)) {
+        if (!isMainMenu(event.gui) || !Mouse.isButtonDown(0)) {
             return
         }
         if (System.currentTimeMillis() - lastClick < 500) {

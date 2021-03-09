@@ -43,7 +43,14 @@ open class GuiLabel(
         return longestLineIndex
     }
 
-    open fun getStringWidth() = fontRenderer.getStringWidth(texts[getLongestLineIndex()])
+    open fun getStringWidth(): Int {
+        val i = getLongestLineIndex()
+        return if(i < texts.size) {
+            fontRenderer.getStringWidth(texts[getLongestLineIndex()])
+        } else {
+            0
+        }
+    }
     open fun getStringHeight() = STRING_HEIGHT * texts.size
 
     open fun getStartingPosition() = when (pos) {

@@ -345,15 +345,16 @@ fun getClickLink(): String {
     return if (link == "") getUpdateLink() else link
 }
 
-fun jsonStringArrayToList(array: JsonArray?): List<String> {
-    val list: MutableList<String> = ArrayList()
+fun jsonStringArrayToList(array: JsonArray?): List<String>? {
     if (array != null) {
+        val list: MutableList<String> = ArrayList()
         for (element in array) {
-            val str = element.asString
+            val str: String? = element.asString
             if (str != null) {
-                array.add(str)
+                list.add(str)
             }
         }
+        return list
     }
-    return list
+    return null
 }

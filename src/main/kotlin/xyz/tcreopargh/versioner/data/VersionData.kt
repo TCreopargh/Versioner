@@ -103,8 +103,8 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                 this.changelogs = ChangelogData(obj)
             }
         }
-        if (jsonObj.has("mainmenu")) {
-            val obj = jsonObj["mainmenu"]?.asJsonObject
+        if (jsonObj.has("mainMenu")) {
+            val obj = jsonObj["mainMenu"]?.asJsonObject
             if (obj != null) {
                 this.mainMenu = MainMenuData(obj)
             }

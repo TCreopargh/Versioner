@@ -9,8 +9,10 @@ import stanhebben.zenscript.annotations.ZenClass
 import stanhebben.zenscript.annotations.ZenMethod
 import stanhebben.zenscript.annotations.ZenOperator
 import xyz.tcreopargh.versioner.Versioner.versionData
+import xyz.tcreopargh.versioner.config.modpackName
 import xyz.tcreopargh.versioner.util.CT_NAMESPACE
 import xyz.tcreopargh.versioner.util.getDataFromJsonElement
+import xyz.tcreopargh.versioner.util.getMainMenuTexts
 import xyz.tcreopargh.versioner.util.getUpdateChatMessage
 import java.util.stream.Collectors
 
@@ -21,6 +23,10 @@ import java.util.stream.Collectors
 @ZenClass(CT_NAMESPACE + "Versioner")
 @ZenRegister
 object VersionerCT {
+
+    @ZenMethod
+    @JvmStatic
+    fun getCurrentVersion(): CurrentVersionCT = CurrentVersionCT()
 
     @ZenMethod
     @JvmStatic
@@ -85,6 +91,18 @@ object VersionerCT {
     @ZenMethod
     @JvmStatic
     fun isReady(): Boolean = versionData?.isReady ?: false
+
+    @ZenMethod
+    @JvmStatic
+    fun getModpackName(): String = modpackName
+
+    @ZenMethod
+    @JvmStatic
+    fun getMainMenuText(): List<String> = getMainMenuTexts()
+
+    @ZenMethod
+    @JvmStatic
+    fun getMainMenuTextTooltip(): List<String> = getMainMenuTextTooltip()
 
     @ZenMethod
     @ZenOperator(OperatorType.INDEXGET)

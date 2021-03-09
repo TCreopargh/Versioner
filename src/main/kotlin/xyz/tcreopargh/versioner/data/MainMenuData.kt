@@ -10,15 +10,15 @@ data class MainMenuData(val jsonObj: JsonObject) {
     var clickLink: String? = null
 
     init {
-        if(jsonObj.has("text")) {
-            val arr: JsonArray? = jsonObj.getAsJsonArray("text")
+        if (jsonObj.has("text")) {
+            val arr: JsonArray? = jsonObj.get("text")?.asJsonArray
             text = jsonStringArrayToList(arr)
         }
-        if(jsonObj.has("tooltipText")) {
-            val arr: JsonArray? = jsonObj.getAsJsonArray("tooltipText")
-            text = jsonStringArrayToList(arr)
+        if (jsonObj.has("tooltipText")) {
+            val arr: JsonArray? = jsonObj.get("tooltipText")?.asJsonArray
+            tooltipText = jsonStringArrayToList(arr)
         }
-        if(jsonObj.has("clickLink")) {
+        if (jsonObj.has("clickLink")) {
             clickLink = jsonObj.get("clickLink")?.asString
         }
     }
