@@ -2,6 +2,7 @@ package xyz.tcreopargh.versioner.mainmenu
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiMainMenu
+import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -24,9 +25,12 @@ object GuiHandler {
     var mousePosStored = Coords(0, 0)
     var lastClick: Long = 0
 
+    fun isMainMenu(gui: GuiScreen) =
+        gui is GuiMainMenu || gui::class.qualifiedName == "lumien.custommainmenu.gui.GuiCustom"
+
     @SubscribeEvent
     fun onRenderMainMenu(event: GuiScreenEvent.DrawScreenEvent) {
-        if (event.gui !is GuiMainMenu) {
+        if (!isMainMenu(event.gui)) {
             return
         }
         val mc = Minecraft.getMinecraft()
@@ -55,15 +59,13 @@ object GuiHandler {
 
     @SubscribeEvent
     fun onMainMenuClick(event: GuiScreenEvent.MouseInputEvent) {
-        if (event.gui !is GuiMainMenu || !Mouse.isButtonDown(0)) {
+        if (!isMainMenu(event.gui) && !Mouse.isButtonDown(0)) {
             return
         }
         if (System.currentTimeMillis() - lastClick < 500) {
             return
         }
         lastClick = System.currentTimeMillis()
-        val menu = event.gui as GuiMainMenu
-        menu.handleMouseInput()
         val mc = Minecraft.getMinecraft()
         val position: MenuPositionEnum = MenuPositionEnum.fromString(mainMenu.menuTextPosition)
         val marginVertical = mainMenu.marginVertical
