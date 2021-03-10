@@ -165,7 +165,6 @@ class MainMenu {
         "Text to display on the main menu. You can use variables like %versionName% in the string.",
         "Note: This can get overridden by the fetched version data JSON!"
     )
-
     @JvmField
     var textLines: Array<String> = arrayOf(
         "§eVersion§f: §9%currentVersionName%",

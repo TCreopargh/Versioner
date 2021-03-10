@@ -32,6 +32,9 @@ object EventHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     fun onPlayerLogin(event: EntityJoinWorldEvent) {
+        if (!versionNotifications.showLoginChatUpdateNotification) {
+            return
+        }
         if (event.entity is EntityPlayer && event.world.isRemote) {
             val player = event.entity as EntityPlayer
             if (player.uniqueID == Minecraft.getMinecraft().player.uniqueID) {
@@ -44,20 +47,24 @@ object EventHandler {
                             player.sendMessage(msg)
                         }
                     } else {
-                        player.sendMessage(
-                            TextComponentTranslation("versioner.variables.update_check_failed")
-                                .setStyle(Style().apply {
-                                    color = TextFormatting.RED
-                                })
-                        )
+                        if (versionNotifications.showUpdateCheckFailedMessage) {
+                            player.sendMessage(
+                                TextComponentTranslation("versioner.variables.update_check_failed")
+                                    .setStyle(Style().apply {
+                                        color = TextFormatting.RED
+                                    })
+                            )
+                        }
                     }
                     Versioner.isUpdateMessageShown = true
                 }
             }
             recognizedPlayers.add(player.uniqueID)
-            val msg = versionData?.welcomeMessage
-            if (msg != null) {
-                player.sendMessage(getTextComponentFromJSON(msg))
+            if(versionNotifications.showWelcomeMessage) {
+                val msg = versionData?.welcomeMessage
+                if (msg != null) {
+                    player.sendMessage(getTextComponentFromJSON(msg))
+                }
             }
         }
     }
