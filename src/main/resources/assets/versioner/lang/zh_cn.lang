@@ -39,6 +39,5 @@ versioner.variables.update_available.latest=最新版本： %s
 versioner.variables.update_available.false=你当前游玩的是最新版本！
 versioner.variables.update_available.fail=更新检查失败！
 versioner.variables.update_check_failed=无法检查整合包更新，请检查你的网络连接。如果你确信不是你的问题，请联系整合包作者。
-versioner.command.sponsors.usage=/sponsors <list|check> [玩家]
 versioner.command.sponsors.check_true=%s 是处于 %s 类别中的赞助者
 versioner.command.sponsors.check_false=%s 不是赞助者！

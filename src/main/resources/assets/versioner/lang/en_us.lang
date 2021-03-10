@@ -39,6 +39,5 @@ versioner.variables.update_available.latest=Latest Version: %s
 versioner.variables.update_available.false=You are playing on the latest version!
 versioner.variables.update_available.fail=Update Check Failed!
 versioner.variables.update_check_failed=Failed to check for modpack update, please check your Internet connection. If you believe it's not your problem please report this to the modpack author.
-versioner.command.sponsors.usage=/sponsors <list|check> [player]
 versioner.command.sponsors.check_true=%s is a sponsor in category: %s
 versioner.command.sponsors.check_false=%s is not a sponsor!

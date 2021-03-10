@@ -2,12 +2,14 @@ package xyz.tcreopargh.versioner.commands
 
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.text.*
 import xyz.tcreopargh.versioner.Versioner.versionData
 import xyz.tcreopargh.versioner.util.getAllPlayerNames
+import java.util.*
+
 
 /**
  * @author TCreopargh
@@ -26,7 +28,7 @@ object CommandHandler {
         }
 
         override fun getUsage(p0: ICommandSender): String {
-            return "versioner.command.sponsors.usage"
+            return "/sponsors <list|check> [player]"
         }
 
         override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<out String>) {
@@ -41,8 +43,15 @@ object CommandHandler {
                 }
                 ARG_CHECK -> {
                     val playerName = args.getOrNull(1)
-                    val player: EntityPlayer? = server.playerList.getPlayerByUsername(playerName ?: "null")
-                    if (player != null) {
+                    val players: MutableList<EntityPlayerMP> = ArrayList()
+                    players.addAll(
+                        getPlayers(
+                            server,
+                            sender,
+                            playerName ?: ""
+                        )
+                    )
+                    for (player in players) {
                         val category = versionData?.sponsors?.checkPlayer(player)
                         if (category != null) {
                             sender.sendMessage(
