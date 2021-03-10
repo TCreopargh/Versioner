@@ -9,6 +9,7 @@ import xyz.tcreopargh.versioner.Versioner
 import xyz.tcreopargh.versioner.config.currentVersion
 import xyz.tcreopargh.versioner.config.modpackName
 import xyz.tcreopargh.versioner.util.compareVersionNames
+import xyz.tcreopargh.versioner.util.currentVariables
 import xyz.tcreopargh.versioner.util.i18nSafe
 import java.io.IOException
 import java.util.*
@@ -56,19 +57,17 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
                     false -> "§a" + i18nSafe("versioner.variables.update_available.false")
                     else  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
                 }
-            else                 ->
-                if (variables?.get(key)?.isJsonNull != false)
-                    ""
-                else variables?.get(key)?.toString() ?: ""
+            else                 -> getVariableString(key) ?: "%key%"
         }
     }
 
     fun getVariable(name: String): JsonElement? {
-        return variables?.get(name)
+        return variables?.get(name) ?: currentVariables[name]
     }
 
     fun getVariableString(name: String): String? {
-        return variables?.get(name)?.toString()
+        return (if (getVariable(name)?.isJsonPrimitive == true)
+            getVariable(name)?.asString else getVariable(name)?.toString())
     }
 
     @Throws(MalformedJsonException::class, JsonSyntaxException::class, java.lang.IllegalStateException::class)
@@ -139,7 +138,8 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
 
     fun getFormattedString(format: String): String {
         var formattedString = format
-        val possibleKeys: MutableSet<String> = HashSet(variableNamesSet())
+        val possibleKeys: MutableSet<String> = HashSet(currentVariables.keys)
+        possibleKeys.addAll(variableNamesSet())
         possibleKeys.addAll(
             listOf(
                 "versionName",

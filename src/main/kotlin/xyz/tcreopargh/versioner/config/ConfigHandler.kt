@@ -102,7 +102,10 @@ class CurrentVersion {
     var versionFormat = "%currentVersionName%"
 
     @LangKey("versioner.config.current_version.variables")
-    @Config.Comment("Variables to use when formatting current version. One entry per line, the format is key=value")
+    @Config.Comment(
+        "Variables to use when formatting current version. One entry per line, the format is key=value",
+        "Values must follow JSON element format, for example strings must be double quoted"
+    )
     @JvmField
     var variables: Array<String> = arrayOf()
 }

@@ -5,13 +5,16 @@ package xyz.tcreopargh.versioner.util
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import com.google.gson.JsonParser
 import crafttweaker.api.data.*
 import net.minecraft.server.management.PlayerList
 import net.minecraft.util.text.*
 import net.minecraft.util.text.event.ClickEvent
 import net.minecraft.util.text.event.HoverEvent
+import org.apache.logging.log4j.Level
 import xyz.tcreopargh.versioner.Versioner
+import xyz.tcreopargh.versioner.Versioner.logger
 import xyz.tcreopargh.versioner.Versioner.versionData
 import xyz.tcreopargh.versioner.commands.CommandHandler
 import xyz.tcreopargh.versioner.config.*
@@ -63,13 +66,24 @@ fun compareVersionNames(a: String?, b: String?): Int {
     return 0
 }
 
-fun getCurrentEntryString(key: String): String {
-    return when (key) {
+fun getCurrentEntryString(key: String): String =
+    when (key) {
         "currentVersionName" -> currentVersion.versionName
         "currentVersionCode" -> currentVersion.versionCode.toString()
         "isUpdateAvailable"  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
         "modpackName"        -> modpackName
-        else                 -> currentVariables[key]?.toString() ?: ""
+        else                 -> getCurrentVariableString(key) ?: "%key%"
+    }
+
+
+fun getCurrentVariable(key: String) = currentVariables[key]
+
+fun getCurrentVariableString(key: String): String? {
+    val element = getCurrentVariable(key) ?: return null
+    return if (element.isJsonPrimitive) {
+        element.asString
+    } else {
+        element.toString()
     }
 }
 
@@ -86,12 +100,16 @@ fun saveVariables() {
         var value: String? = null
         for (i in entry.indices) {
             if (entry[i] == '=' && i < entry.length - 1) {
-                key = entry.substring(0 until i).trim()
+                key = entry.substring(0, i).trim()
                 value = entry.substring(i + 1)
             }
         }
         if (key != null && value != null) {
-            currentVariables[key] = JsonParser().parse(value)
+            try {
+                currentVariables[key] = JsonParser().parse(value)
+            } catch (e: JsonParseException) {
+                logger?.log(Level.ERROR, "$value is not a valid JSON element!")
+            }
         }
     }
 }
