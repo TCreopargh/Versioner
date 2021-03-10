@@ -62,11 +62,11 @@ open class GuiLabel(
         )
         BOTTOM_LEFT   -> Coords(
             marginHorizontal,
-            scale.scaledHeight - marginVertical - STRING_HEIGHT - getStringHeight()
+            scale.scaledHeight - marginVertical - getStringHeight()
         )
         BOTTOM_RIGHT  -> Coords(
             scale.scaledWidth - getStringWidth() - marginHorizontal,
-            scale.scaledHeight - marginVertical - STRING_HEIGHT - getStringHeight()
+            scale.scaledHeight - marginVertical- getStringHeight()
         )
         CENTER        -> Coords(
             scale.scaledWidth / 2 - getStringWidth() / 2,
@@ -78,7 +78,7 @@ open class GuiLabel(
         )
         BOTTOM_CENTER -> Coords(
             scale.scaledWidth / 2 - getStringWidth() / 2,
-            scale.scaledHeight - marginVertical - STRING_HEIGHT - getStringHeight()
+            scale.scaledHeight - marginVertical - getStringHeight()
         )
         CENTER_LEFT   -> Coords(
             marginHorizontal,
