@@ -30,6 +30,9 @@ object GuiHandler {
 
     @SubscribeEvent
     fun onRenderMainMenu(event: GuiScreenEvent.DrawScreenEvent) {
+        if (!mainMenu.enableMainMenu) {
+            return
+        }
         if (!isMainMenu(event.gui)) {
             return
         }
@@ -59,6 +62,9 @@ object GuiHandler {
 
     @SubscribeEvent
     fun onMainMenuClick(event: GuiScreenEvent.MouseInputEvent) {
+        if (!mainMenu.enableMainMenu) {
+            return
+        }
         if (!isMainMenu(event.gui) || !Mouse.isButtonDown(0)) {
             return
         }
