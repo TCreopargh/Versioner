@@ -10,6 +10,7 @@ import net.minecraftforge.common.config.ConfigManager
 import net.minecraftforge.event.entity.EntityJoinWorldEvent
 import net.minecraftforge.fml.client.event.ConfigChangedEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
+import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -30,7 +31,7 @@ object EventHandler {
     var recognizedPlayers: MutableList<UUID> = ArrayList()
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: EntityJoinWorldEvent) {
         if (!versionNotifications.showLoginChatUpdateNotification) {
             return
@@ -60,7 +61,7 @@ object EventHandler {
                 }
             }
             recognizedPlayers.add(player.uniqueID)
-            if(versionNotifications.showWelcomeMessage) {
+            if (versionNotifications.showWelcomeMessage) {
                 val msg = versionData?.welcomeMessage
                 if (msg != null) {
                     player.sendMessage(getTextComponentFromJSON(msg))
