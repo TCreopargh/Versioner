@@ -310,7 +310,7 @@ fun getDataFromJsonElement(element: JsonElement?): IData {
                 primitive.isNumber  -> {
                     val num: Double = element.asDouble
                     if (num == floor(num)) {
-                        return DataInt(num.toInt())
+                        return DataInt(element.asInt)
                     }
                     return DataDouble(num)
                 }
