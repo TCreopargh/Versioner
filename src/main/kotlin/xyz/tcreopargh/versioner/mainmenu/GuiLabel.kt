@@ -23,9 +23,7 @@ open class GuiLabel(
     var marginHorizontal: Int = 2,
     var pos: MenuPositionEnum = TOP_LEFT,
     var scale: ScaledResolution = ScaledResolution(mc),
-    val fontRenderer: FontRenderer = mc.fontRenderer.apply {
-        unicodeFlag = true
-    }
+    val fontRenderer: FontRenderer = mc.fontRenderer
 ) : Gui() {
 
     companion object {

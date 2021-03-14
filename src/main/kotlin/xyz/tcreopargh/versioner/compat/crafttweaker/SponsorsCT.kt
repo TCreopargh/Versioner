@@ -42,7 +42,7 @@ class SponsorsCT(val internal: SponsorData) {
     fun getPlayerCategory(player: IPlayer): String? {
         val mcPlayer = CraftTweakerMC.getPlayer(player)
         if (mcPlayer != null) {
-            return internal.checkPlayer(mcPlayer)?.toString() as String
+            return internal.checkPlayer(mcPlayer)?.name as String
         }
         return null
     }

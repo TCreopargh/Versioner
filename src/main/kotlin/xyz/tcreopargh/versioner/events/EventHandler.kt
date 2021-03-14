@@ -57,16 +57,16 @@ object EventHandler {
                             )
                         }
                     }
+                    if (versionNotifications.showWelcomeMessage) {
+                        val msg = versionData?.welcomeMessage
+                        if (msg != null) {
+                            player.sendMessage(getTextComponentFromJSON(msg))
+                        }
+                    }
                     Versioner.isUpdateMessageShown = true
                 }
             }
             recognizedPlayers.add(player.uniqueID)
-            if (versionNotifications.showWelcomeMessage) {
-                val msg = versionData?.welcomeMessage
-                if (msg != null) {
-                    player.sendMessage(getTextComponentFromJSON(msg))
-                }
-            }
         }
     }
 

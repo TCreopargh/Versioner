@@ -26,7 +26,7 @@ import xyz.tcreopargh.versioner.proxy.CommonProxy
 object Versioner {
     const val MOD_ID = "versioner"
     const val MOD_NAME = "Versioner"
-    const val VERSION = "1.0.0"
+    const val VERSION = "1.0.1"
     const val LANG_ADAPTER = "net.shadowfacts.forgelin.KotlinAdapter"
     const val DEPENDENCIES = "required-after:crafttweaker;required-after:forgelin"
 
