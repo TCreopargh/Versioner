@@ -19,16 +19,17 @@ import xyz.tcreopargh.versioner.util.getMainMenuTooltipTexts
  * @author TCreopargh
  */
 @Mod.EventBusSubscriber(modid = Versioner.MOD_ID)
-@SideOnly(Side.CLIENT)
 object GuiHandler {
 
     var mousePosStored = Coords(0, 0)
     var lastClick: Long = 0
 
+    @SideOnly(Side.CLIENT)
     fun isMainMenu(gui: GuiScreen) =
         gui is GuiMainMenu || gui::class.qualifiedName == "lumien.custommainmenu.gui.GuiCustom"
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     fun onRenderMainMenu(event: GuiScreenEvent.DrawScreenEvent) {
         if (!mainMenu.enableMainMenu) {
             return
@@ -61,6 +62,7 @@ object GuiHandler {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     fun onMainMenuClick(event: GuiScreenEvent.MouseInputEvent) {
         if (!mainMenu.enableMainMenu) {
             return

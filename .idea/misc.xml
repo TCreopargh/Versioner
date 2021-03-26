@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="11">
-      <item index="0" class="java.lang.String" itemvalue="crafttweaker.annotations.ZenRegister" />
-      <item index="1" class="java.lang.String" itemvalue="net.minecraftforge.common.config.Config.Comment" />
-      <item index="2" class="java.lang.String" itemvalue="net.minecraftforge.common.config.Config.LangKey" />
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.Mod" />
+      <item index="1" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.Mod.EventHandler" />
+      <item index="2" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.eventhandler.SubscribeEvent" />
       <item index="3" class="java.lang.String" itemvalue="net.minecraftforge.eventbus.api.SubscribeEvent" />
-      <item index="4" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.Mod" />
-      <item index="5" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.Mod.EventBusSubscriber" />
-      <item index="6" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.Mod.EventHandler" />
-      <item index="7" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.eventhandler.SubscribeEvent" />
-      <item index="8" class="java.lang.String" itemvalue="net.minecraftforge.fml.common.network.NetworkCheckHandler" />
-      <item index="9" class="java.lang.String" itemvalue="stanhebben.zenscript.annotations.ZenGetter" />
-      <item index="10" class="java.lang.String" itemvalue="stanhebben.zenscript.annotations.ZenMethod" />
     </list>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 </project>

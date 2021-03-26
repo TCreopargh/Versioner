@@ -43,7 +43,7 @@ data class VersionData(val jsonObj: JsonObject, var doInitialize: Boolean = true
             "updateLink"         -> updateLink.toString()
             "welcomeMessage"     -> welcomeMessage.toString()
             "sponsorMessage"     -> sponsorMessage.toString()
-            "modpackName"        -> modpackName
+            "modpackName"        -> i18nSafe(modpackName)
             "isUpdateAvailable"  ->
                 when (isUpdateAvailableOrNull()) {
                     true  -> "§b" + i18nSafe(

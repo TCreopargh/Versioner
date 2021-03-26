@@ -71,7 +71,7 @@ fun getCurrentEntryString(key: String): String =
         "currentVersionName" -> currentVersion.versionName
         "currentVersionCode" -> currentVersion.versionCode.toString()
         "isUpdateAvailable"  -> "§c" + i18nSafe("versioner.variables.update_available.fail")
-        "modpackName"        -> modpackName
+        "modpackName"        -> i18nSafe(modpackName)
         else                 -> getCurrentVariableString(key) ?: "%key%"
     }
 

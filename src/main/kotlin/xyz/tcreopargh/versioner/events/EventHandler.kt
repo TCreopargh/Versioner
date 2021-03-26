@@ -47,6 +47,12 @@ object EventHandler {
                         for (msg in getUpdateChatMessage()) {
                             player.sendMessage(msg)
                         }
+                        if (versionNotifications.showWelcomeMessage) {
+                            val msg = versionData?.welcomeMessage
+                            if (msg != null) {
+                                player.sendMessage(getTextComponentFromJSON(msg))
+                            }
+                        }
                     } else {
                         if (versionNotifications.showUpdateCheckFailedMessage) {
                             player.sendMessage(
@@ -55,12 +61,6 @@ object EventHandler {
                                         color = TextFormatting.RED
                                     })
                             )
-                        }
-                    }
-                    if (versionNotifications.showWelcomeMessage) {
-                        val msg = versionData?.welcomeMessage
-                        if (msg != null) {
-                            player.sendMessage(getTextComponentFromJSON(msg))
                         }
                     }
                     Versioner.isUpdateMessageShown = true

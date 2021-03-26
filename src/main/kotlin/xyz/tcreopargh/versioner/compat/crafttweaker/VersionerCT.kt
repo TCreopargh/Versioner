@@ -4,6 +4,7 @@ import crafttweaker.annotations.ZenRegister
 import crafttweaker.api.data.IData
 import crafttweaker.api.minecraft.CraftTweakerMC
 import crafttweaker.api.text.ITextComponent
+import net.minecraft.util.text.TextComponentTranslation
 import stanhebben.zenscript.annotations.ZenClass
 import stanhebben.zenscript.annotations.ZenMethod
 import xyz.tcreopargh.versioner.Versioner.versionData
@@ -93,6 +94,13 @@ object VersionerCT {
     @ZenMethod
     @JvmStatic
     fun getModpackName(): String = modpackName
+
+    @ZenMethod
+    @JvmStatic
+    fun getTranslatedModpackName(): ITextComponent = CraftTweakerMC.getITextComponent(
+        TextComponentTranslation
+            (modpackName)
+    )
 
     @ZenMethod
     @JvmStatic

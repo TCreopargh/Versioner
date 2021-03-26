@@ -53,6 +53,9 @@ class SponsorsCT(val internal: SponsorData) {
     }.collect(Collectors.toList())
 
     @ZenMethod
+    fun getCategoryDisplayName(category: String): String? = internal[category]?.displayName
+
+    @ZenMethod
     fun getFormattedCategory(category: String): ITextComponent? {
         val text = internal[category]?.getFormattedName()
         return if (text != null) CraftTweakerMC.getITextComponent(text) else null

@@ -15,7 +15,8 @@ buildscript {
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
     dependencies {
-        classpath("com.anatawa12.forge:ForgeGradle:2.3-1.0.+") {
+        classpath("net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT") {
+        //classpath("net.minecraftforge.gradle.forge:net.minecraftforge.gradle.forge.gradle.plugin:2.0.2") {
             isChanging = true
         }
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")

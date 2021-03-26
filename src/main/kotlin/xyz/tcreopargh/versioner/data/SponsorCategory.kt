@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.text.ITextComponent
 import net.minecraft.util.text.Style
 import net.minecraft.util.text.TextComponentString
+import net.minecraft.util.text.TextComponentTranslation
 import xyz.tcreopargh.versioner.config.changelogPrefix
 import xyz.tcreopargh.versioner.util.addTextFormat
 import xyz.tcreopargh.versioner.util.plus
@@ -18,11 +19,15 @@ import kotlin.collections.ArrayList
 data class SponsorCategory
 constructor(
     val name: String,
+    var displayName: String? = null,
     var titleStyle: Style = Style(),
     var sponsorStyle: Style = Style(),
     var sponsors: MutableList<Sponsor> = ArrayList()
 ) {
     constructor(jsonObj: JsonObject) : this(jsonObj.get("category").asString ?: "") {
+        if(jsonObj.has("displayName")) {
+            displayName = jsonObj.get("displayName").asString
+        }
         val titleFormatsList: JsonArray? = jsonObj.getAsJsonArray("titleFormat")
         val sponsorFormatsList: JsonArray? = jsonObj.getAsJsonArray("sponsorFormat")
         val sponsorsList: JsonArray? = jsonObj.getAsJsonArray("sponsors")
@@ -87,14 +92,19 @@ constructor(
         return false
     }
 
-    fun getFormattedName(): ITextComponent = TextComponentString(name).setStyle(titleStyle)
+    fun getFormattedName(): ITextComponent {
+        if (displayName != null) {
+            return TextComponentTranslation(displayName ?: name).setStyle(titleStyle)
+        }
+        return TextComponentString(name).setStyle(titleStyle)
+    }
 
     /**
      * Using list because a large ITextComponent object can produce StackOverflowError
      */
     fun getFormattedText(): MutableList<ITextComponent> {
         val components: MutableList<ITextComponent> =
-            mutableListOf(TextComponentString(name).setStyle(titleStyle) + TextComponentString(":"))
+            mutableListOf(getFormattedName().setStyle(titleStyle) + TextComponentString(":"))
         for (sponsor in sponsors) {
             components.add(TextComponentString(changelogPrefix) + sponsor.getFormattedText(sponsorStyle))
         }
