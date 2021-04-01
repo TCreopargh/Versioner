@@ -28,7 +28,7 @@ import java.util.*
 @EventBusSubscriber(modid = Versioner.MOD_ID)
 object EventHandler {
 
-    var recognizedPlayers: MutableList<UUID> = ArrayList()
+    private var recognizedPlayers: MutableList<UUID> = ArrayList()
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -41,11 +41,12 @@ object EventHandler {
             if (player.uniqueID == Minecraft.getMinecraft().player.uniqueID) {
                 if (!Versioner.isUpdateMessageShown
                     && versionNotifications.showLoginChatUpdateNotification
-                    && versionData?.isUpdateAvailable() == true
                 ) {
                     if (versionData?.isReady == true) {
-                        for (msg in getUpdateChatMessage()) {
-                            player.sendMessage(msg)
+                        if (versionData?.isUpdateAvailable() == true) {
+                            for (msg in getUpdateChatMessage()) {
+                                player.sendMessage(msg)
+                            }
                         }
                         if (versionNotifications.showWelcomeMessage) {
                             val msg = versionData?.welcomeMessage

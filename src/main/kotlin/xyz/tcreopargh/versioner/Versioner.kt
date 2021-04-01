@@ -26,12 +26,13 @@ import xyz.tcreopargh.versioner.proxy.CommonProxy
 object Versioner {
     const val MOD_ID = "versioner"
     const val MOD_NAME = "Versioner"
-    const val VERSION = "1.0.2"
+    const val VERSION = "1.0.3"
+
     const val LANG_ADAPTER = "net.shadowfacts.forgelin.KotlinAdapter"
     const val DEPENDENCIES = "required-after:crafttweaker;required-after:forgelin"
 
-    const val CLIENT_PROXY = "xyz.tcreopargh.versioner.proxy.ClientProxy"
-    const val COMMON_PROXY = "xyz.tcreopargh.versioner.proxy.CommonProxy"
+    private const val CLIENT_PROXY = "xyz.tcreopargh.versioner.proxy.ClientProxy"
+    private const val COMMON_PROXY = "xyz.tcreopargh.versioner.proxy.CommonProxy"
 
     var versionData: VersionData? = null
     var isUpdateMessageShown = false
